@@ -155,7 +155,7 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
     serializer_class = FuncionarioSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['departamento', 'funcao', 'unidade', 'ativo']
+    queryset = Funcionario.objects.filter(ativo=True)
     search_fields = ['nome', 'ramal', 'email', 'whatsapp']
     ordering_fields = ['nome', 'ramal']
     ordering = ['nome']

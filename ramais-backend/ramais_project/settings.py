@@ -157,3 +157,4 @@ CORS_ALLOW_CREDENTIALS = True
 # Login/Logout URLs
 LOGIN_URL = '/api-auth/login/'
 LOGOUT_URL = '/api-auth/logout/'
+AUTH_USER_MODEL = 'ramais.Usuario'
