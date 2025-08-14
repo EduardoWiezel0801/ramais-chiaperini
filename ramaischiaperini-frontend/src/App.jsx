@@ -1,7 +1,42 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-const API_BASE = 'http://localhost:5000/api'
+const API_BASE = 'http://localhost:8000/api'
+
+// Função para obter CSRF token
+const getCSRFToken = () => {
+  const name = 'csrftoken'
+  let cookieValue = null
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';')
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim()
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+        break
+      }
+    }
+  }
+  return cookieValue
+}
+
+// Função para fazer requisições autenticadas
+const authenticatedFetch = async (url, options = {}) => {
+  const csrfToken = getCSRFToken()
+  
+  const defaultHeaders = {
+    'Content-Type': 'application/json',
+    'X-CSRFToken': csrfToken || '',
+  }
+
+  const config = {
+    credentials: 'include',
+    headers: { ...defaultHeaders, ...options.headers },
+    ...options
+  }
+
+  return fetch(url, config)
+}
 
 function App() {
   // Estados principais
@@ -25,7 +60,7 @@ function App() {
   
   // Estados para modais
   const [showModal, setShowModal] = useState(false)
-  const [modalType, setModalType] = useState('') // 'funcionario', 'departamento', 'funcao', 'unidade'
+  const [modalType, setModalType] = useState('')
   const [editingItem, setEditingItem] = useState(null)
   const [formData, setFormData] = useState({})
   
@@ -34,7 +69,7 @@ function App() {
 
   // Verificar autenticação ao carregar
   useEffect(() => {
-    checkAuth()
+    initializeApp()
   }, [])
 
   // Carregar dados quando usuário logado
@@ -44,46 +79,81 @@ function App() {
     }
   }, [user])
 
+  // Recarregar dados quando filtros mudarem
+  useEffect(() => {
+    if (user) {
+      loadAllData()
+    }
+  }, [busca, filtros])
+
+  const initializeApp = async () => {
+    try {
+      // Primeiro, obter CSRF token fazendo uma requisição inicial
+      await authenticatedFetch(`${API_BASE}/`)
+      
+      // Depois verificar autenticação
+      await checkAuth()
+    } catch (error) {
+      console.error('Erro ao inicializar app:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const checkAuth = async () => {
     try {
-      const response = await fetch(`${API_BASE}/me`, {
-        credentials: 'include'
-      })
+      const response = await authenticatedFetch(`${API_BASE}/auth/me/`)
       if (response.ok) {
         const userData = await response.json()
         setUser(userData)
       }
     } catch (error) {
       console.error('Erro ao verificar autenticação:', error)
-    } finally {
-      setLoading(false)
     }
   }
 
   const loadAllData = async () => {
     try {
+      const queryParams = new URLSearchParams({
+        busca: busca || '',
+        departamento_id: filtros.departamento_id || '',
+        funcao_id: filtros.funcao_id || '',
+        unidade_id: filtros.unidade_id || ''
+      })
+
       const [funcRes, deptRes, funcaoRes, unidRes] = await Promise.all([
-        fetch(`${API_BASE}/funcionarios?busca=${busca}&departamento_id=${filtros.departamento_id}&funcao_id=${filtros.funcao_id}&unidade_id=${filtros.unidade_id}`, { credentials: 'include' }),
-        fetch(`${API_BASE}/departamentos`, { credentials: 'include' }),
-        fetch(`${API_BASE}/funcoes`, { credentials: 'include' }),
-        fetch(`${API_BASE}/unidades`, { credentials: 'include' })
+        authenticatedFetch(`${API_BASE}/funcionarios/?${queryParams}`),
+        authenticatedFetch(`${API_BASE}/departamentos/`),
+        authenticatedFetch(`${API_BASE}/funcoes/`),
+        authenticatedFetch(`${API_BASE}/unidades/`)
       ])
 
-      if (funcRes.ok) setFuncionarios(await funcRes.json())
-      if (deptRes.ok) setDepartamentos(await deptRes.json())
-      if (funcaoRes.ok) setFuncoes(await funcaoRes.json())
-      if (unidRes.ok) setUnidades(await unidRes.json())
+      if (funcRes.ok) {
+        const funcData = await funcRes.json()
+        setFuncionarios(Array.isArray(funcData) ? funcData : funcData.results || [])
+      }
+      if (deptRes.ok) {
+        const deptData = await deptRes.json()
+        setDepartamentos(Array.isArray(deptData) ? deptData : deptData.results || [])
+      }
+      if (funcaoRes.ok) {
+        const funcaoData = await funcaoRes.json()
+        setFuncoes(Array.isArray(funcaoData) ? funcaoData : funcaoData.results || [])
+      }
+      if (unidRes.ok) {
+        const unidData = await unidRes.json()
+        setUnidades(Array.isArray(unidData) ? unidData : unidData.results || [])
+      }
     } catch (error) {
       showMessage('error', 'Erro ao carregar dados')
+      console.error('Erro ao carregar dados:', error)
     }
   }
 
   const login = async (username, password) => {
     try {
-      const response = await fetch(`${API_BASE}/login`, {
+      const response = await authenticatedFetch(`${API_BASE}/auth/login/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ username, password })
       })
 
@@ -92,26 +162,28 @@ function App() {
         setUser(data.user)
         showMessage('success', 'Login realizado com sucesso!')
       } else {
-        const error = await response.json()
-        showMessage('error', error.error || 'Erro no login')
+        const errorData = await response.json().catch(() => ({ detail: 'Erro no login' }))
+        showMessage('error', errorData.detail || errorData.username?.[0] || errorData.password?.[0] || 'Erro no login')
       }
     } catch (error) {
       showMessage('error', 'Erro de conexão')
+      console.error('Erro no login:', error)
     }
   }
 
   const logout = async () => {
     try {
-      await fetch(`${API_BASE}/logout`, {
-        method: 'POST',
-        credentials: 'include'
+      await authenticatedFetch(`${API_BASE}/auth/logout/`, {
+        method: 'POST'
       })
       setUser(null)
       setFuncionarios([])
       setDepartamentos([])
       setFuncoes([])
       setUnidades([])
+      showMessage('success', 'Logout realizado com sucesso!')
     } catch (error) {
+      showMessage('error', 'Erro no logout')
       console.error('Erro no logout:', error)
     }
   }
@@ -121,120 +193,78 @@ function App() {
     setTimeout(() => setMessage({ type: '', text: '' }), 5000)
   }
 
-  const openModal = (type, item = null) => {
-    setModalType(type)
-    setEditingItem(item)
-    
-    if (type === 'funcionario') {
-      setFormData(item || {
-        nome: '',
-        ramal: '',
-        email: '',
-        whatsapp: '',
-        departamento_id: '',
-        funcao_id: '',
-        unidade_id: ''
-      })
-    } else {
-      setFormData(item || { nome: '' })
-    }
-    
-    setShowModal(true)
+  const clearFilters = () => {
+    setBusca('')
+    setFiltros({ departamento_id: '', funcao_id: '', unidade_id: '' })
   }
 
-  const closeModal = () => {
-    setShowModal(false)
-    setModalType('')
-    setEditingItem(null)
-    setFormData({})
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    const endpoints = {
-      funcionario: 'funcionarios',
-      departamento: 'departamentos',
-      funcao: 'funcoes',
-      unidade: 'unidades'
-    }
-    
-    const endpoint = endpoints[modalType]
-    const method = editingItem ? 'PUT' : 'POST'
-    const url = editingItem 
-      ? `${API_BASE}/${endpoint}/${editingItem.id}`
-      : `${API_BASE}/${endpoint}`
-
+  // Funções CRUD
+  const saveItem = async () => {
     try {
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+      const url = editingItem 
+        ? `${API_BASE}/${modalType}s/${editingItem.id}/`
+        : `${API_BASE}/${modalType}s/`
+      
+      const response = await authenticatedFetch(url, {
+        method: editingItem ? 'PUT' : 'POST',
         body: JSON.stringify(formData)
       })
 
       if (response.ok) {
         showMessage('success', `${modalType} ${editingItem ? 'atualizado' : 'criado'} com sucesso!`)
-        closeModal()
+        setShowModal(false)
+        setEditingItem(null)
+        setFormData({})
         loadAllData()
       } else {
-        const error = await response.json()
-        showMessage('error', error.error || 'Erro ao salvar')
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao salvar' }))
+        const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao salvar'
+        showMessage('error', errorMessage)
       }
     } catch (error) {
       showMessage('error', 'Erro de conexão')
+      console.error('Erro ao salvar:', error)
     }
   }
 
-  const handleDelete = async (type, id) => {
+  const deleteItem = async (type, id) => {
     if (!confirm('Tem certeza que deseja excluir?')) return
 
-    const endpoints = {
-      funcionario: 'funcionarios',
-      departamento: 'departamentos',
-      funcao: 'funcoes',
-      unidade: 'unidades'
-    }
-
     try {
-      const response = await fetch(`${API_BASE}/${endpoints[type]}/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
+      const response = await authenticatedFetch(`${API_BASE}/${type}s/${id}/`, {
+        method: 'DELETE'
       })
 
       if (response.ok) {
         showMessage('success', `${type} excluído com sucesso!`)
         loadAllData()
       } else {
-        const error = await response.json()
-        showMessage('error', error.error || 'Erro ao excluir')
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao excluir' }))
+        showMessage('error', errorData.detail || 'Erro ao excluir')
       }
     } catch (error) {
       showMessage('error', 'Erro de conexão')
+      console.error('Erro ao excluir:', error)
     }
   }
 
-  const clearFilters = () => {
-    setBusca('')
-    setFiltros({
-      departamento_id: '',
-      funcao_id: '',
-      unidade_id: ''
-    })
+  const openModal = (type, item = null) => {
+    setModalType(type)
+    setEditingItem(item)
+    setFormData(item || {})
+    setShowModal(true)
   }
 
-  // Aplicar filtros quando mudarem
-  useEffect(() => {
-    if (user) {
-      loadAllData()
-    }
-  }, [busca, filtros])
+  const closeModal = () => {
+    setShowModal(false)
+    setEditingItem(null)
+    setFormData({})
+  }
 
   if (loading) {
     return (
-      <div className="loading">
-        <div className="spinner"></div>
-        Carregando...
+      <div className="loading-container">
+        <div className="loading">Carregando...</div>
       </div>
     )
   }
@@ -247,11 +277,9 @@ function App() {
     <div className="app">
       <header className="header">
         <div className="header-content">
-          <a href="#" className="logo">Sistema de Ramais - Chiaperini</a>
+          <h1 className="logo">Sistema de Ramais - Chiaperini</h1>
           <div className="user-info">
-            <span className="user-name">
-              {user.username} {user.is_admin && '(Admin)'}
-            </span>
+            <span className="user-name">Olá, {user.username}</span>
             <button className="logout-btn" onClick={logout}>
               Sair
             </button>
@@ -266,22 +294,20 @@ function App() {
           </div>
         )}
 
-        {user.is_admin && (
-          <nav className="nav-tabs">
-            <button 
-              className={`nav-tab ${activeTab === 'funcionarios' ? 'active' : ''}`}
-              onClick={() => setActiveTab('funcionarios')}
-            >
-              Funcionários
-            </button>
-            <button 
-              className={`nav-tab ${activeTab === 'configuracoes' ? 'active' : ''}`}
-              onClick={() => setActiveTab('configuracoes')}
-            >
-              Configurações
-            </button>
-          </nav>
-        )}
+        <div className="nav-tabs">
+          <button
+            className={`nav-tab ${activeTab === 'funcionarios' ? 'active' : ''}`}
+            onClick={() => setActiveTab('funcionarios')}
+          >
+            👥 Funcionários
+          </button>
+          <button
+            className={`nav-tab ${activeTab === 'configuracoes' ? 'active' : ''}`}
+            onClick={() => setActiveTab('configuracoes')}
+          >
+            ⚙️ Configurações
+          </button>
+        </div>
 
         {activeTab === 'funcionarios' && (
           <FuncionariosTab
@@ -294,63 +320,68 @@ function App() {
             filtros={filtros}
             setFiltros={setFiltros}
             clearFilters={clearFilters}
-            onEdit={user.is_admin ? (item) => openModal('funcionario', item) : null}
-            onDelete={user.is_admin ? (id) => handleDelete('funcionario', id) : null}
-            onAdd={user.is_admin ? () => openModal('funcionario') : null}
+            onEdit={(item) => openModal('funcionario', item)}
+            onDelete={(id) => deleteItem('funcionario', id)}
+            onAdd={() => openModal('funcionario')}
           />
         )}
 
-        {activeTab === 'configuracoes' && user.is_admin && (
+        {activeTab === 'configuracoes' && (
           <ConfiguracoesTab
             departamentos={departamentos}
             funcoes={funcoes}
             unidades={unidades}
             onEdit={(type, item) => openModal(type, item)}
-            onDelete={handleDelete}
+            onDelete={deleteItem}
             onAdd={(type) => openModal(type)}
           />
         )}
-      </main>
 
-      {showModal && (
-        <Modal
-          title={`${editingItem ? 'Editar' : 'Adicionar'} ${modalType}`}
-          onClose={closeModal}
-        >
-          <form onSubmit={handleSubmit}>
+        {showModal && (
+          <Modal
+            title={`${editingItem ? 'Editar' : 'Adicionar'} ${
+              modalType === 'funcionario' ? 'Funcionário' : 
+              modalType === 'departamento' ? 'Departamento' :
+              modalType === 'funcao' ? 'Função' : 'Unidade'
+            }`}
+            onClose={closeModal}
+          >
             <div className="modal-body">
-              {modalType === 'funcionario' ? (
-                <FuncionarioForm
-                  formData={formData}
-                  setFormData={setFormData}
-                  departamentos={departamentos}
-                  funcoes={funcoes}
-                  unidades={unidades}
-                />
-              ) : (
-                <div className="form-group">
-                  <label className="form-label">Nome</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={formData.nome || ''}
-                    onChange={(e) => setFormData({...formData, nome: e.target.value})}
-                    required
+              <form onSubmit={(e) => { e.preventDefault(); saveItem(); }}>
+                {modalType === 'funcionario' ? (
+                  <FuncionarioForm
+                    formData={formData}
+                    setFormData={setFormData}
+                    departamentos={departamentos}
+                    funcoes={funcoes}
+                    unidades={unidades}
                   />
+                ) : (
+                  <div className="form-group">
+                    <label className="form-label">Nome</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={formData.nome || ''}
+                      onChange={(e) => setFormData({...formData, nome: e.target.value})}
+                      required
+                    />
+                  </div>
+                )}
+
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-outline" onClick={closeModal}>
+                    Cancelar
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    {editingItem ? 'Atualizar' : 'Criar'}
+                  </button>
                 </div>
-              )}
+              </form>
             </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-outline" onClick={closeModal}>
-                Cancelar
-              </button>
-              <button type="submit" className="btn btn-primary">
-                {editingItem ? 'Atualizar' : 'Criar'}
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )}
+          </Modal>
+        )}
+      </main>
     </div>
   )
 }
@@ -413,90 +444,126 @@ function LoginForm({ onLogin, message }) {
 // Componente da aba Funcionários
 function FuncionariosTab({ 
   funcionarios, departamentos, funcoes, unidades, 
-  busca, setBusca, filtros, setFiltros, clearFilters,
+  busca, setBusca, filtros, setFiltros, clearFilters, 
   onEdit, onDelete, onAdd 
 }) {
   return (
     <>
-      <div className="search-filters">
-        <div className="search-row">
-          <div className="search-input">
-            <label className="form-label">Buscar</label>
-            <input
-              type="text"
-              className="form-input"
-              placeholder="Nome, ramal ou email..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-            />
-          </div>
-          
-          <div className="filter-group">
-            <div className="filter-item">
-              <label className="form-label">Departamento</label>
-              <select
-                className="form-select"
-                value={filtros.departamento_id}
-                onChange={(e) => setFiltros({...filtros, departamento_id: e.target.value})}
-              >
-                <option value="">Todos</option>
-                {departamentos.map(dept => (
-                  <option key={dept.id} value={dept.id}>{dept.nome}</option>
-                ))}
-              </select>
-            </div>
+      <div className="filters-section">
+        <div className="search-box">
+          <input
+            type="text"
+            className="form-input"
+            placeholder="🔍 Buscar funcionário..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+        </div>
 
-            <div className="filter-item">
-              <label className="form-label">Função</label>
-              <select
-                className="form-select"
-                value={filtros.funcao_id}
-                onChange={(e) => setFiltros({...filtros, funcao_id: e.target.value})}
-              >
-                <option value="">Todas</option>
-                {funcoes.map(func => (
-                  <option key={func.id} value={func.id}>{func.nome}</option>
-                ))}
-              </select>
-            </div>
+        <div className="filters-grid">
+          <select
+            className="form-select"
+            value={filtros.departamento_id}
+            onChange={(e) => setFiltros({...filtros, departamento_id: e.target.value})}
+          >
+            <option value="">Todos os departamentos</option>
+            {departamentos.map(dept => (
+              <option key={dept.id} value={dept.id}>{dept.nome}</option>
+            ))}
+          </select>
 
-            <div className="filter-item">
-              <label className="form-label">Unidade</label>
-              <select
-                className="form-select"
-                value={filtros.unidade_id}
-                onChange={(e) => setFiltros({...filtros, unidade_id: e.target.value})}
-              >
-                <option value="">Todas</option>
-                {unidades.map(unid => (
-                  <option key={unid.id} value={unid.id}>{unid.nome}</option>
-                ))}
-              </select>
-            </div>
-          </div>
+          <select
+            className="form-select"
+            value={filtros.funcao_id}
+            onChange={(e) => setFiltros({...filtros, funcao_id: e.target.value})}
+          >
+            <option value="">Todas as funções</option>
+            {funcoes.map(func => (
+              <option key={func.id} value={func.id}>{func.nome}</option>
+            ))}
+          </select>
 
-          <div style={{display: 'flex', gap: '0.5rem', alignItems: 'end'}}>
-            <button className="btn btn-outline btn-small" onClick={clearFilters}>
-              Limpar
-            </button>
-            {onAdd && (
-              <button className="btn btn-primary btn-small" onClick={onAdd}>
-                + Adicionar
-              </button>
-            )}
-          </div>
+          <select
+            className="form-select"
+            value={filtros.unidade_id}
+            onChange={(e) => setFiltros({...filtros, unidade_id: e.target.value})}
+          >
+            <option value="">Todas as unidades</option>
+            {unidades.map(unid => (
+              <option key={unid.id} value={unid.id}>{unid.nome}</option>
+            ))}
+          </select>
+
+          <button className="btn btn-outline" onClick={clearFilters}>
+            🗑️ Limpar Filtros
+          </button>
         </div>
       </div>
 
-      <div className="cards-grid">
-        {funcionarios.map(funcionario => (
-          <FuncionarioCard
-            key={funcionario.id}
-            funcionario={funcionario}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-        ))}
+      <div className="actions-bar">
+        <button className="btn btn-primary" onClick={onAdd}>
+          + Adicionar Funcionário
+        </button>
+      </div>
+
+      <div className="table-container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Ramal</th>
+              <th>Departamento</th>
+              <th>Função</th>
+              <th>Unidade</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {funcionarios.map(func => (
+              <tr key={func.id}>
+                <td>
+                  <div className="employee-info">
+                    <div className="employee-name">{func.nome}</div>
+                    <div className="employee-details">
+                      <span className="info-item">
+                        <span className="info-label">📧</span>
+                        <span className="info-value">{func.email}</span>
+                      </span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div className="ramal-info">
+                    <span className="ramal-number">{func.ramal}</span>
+                  </div>
+                </td>
+                <td>
+                  <span className={`badge badge-${func.departamento_nome === 'Chiaperini' ? 'chiaperini' : 'techto'}`}>
+                    {func.departamento_nome || func.departamento?.nome}
+                  </span>
+                </td>
+                <td>{func.funcao_nome || func.funcao?.nome}</td>
+                <td>{func.unidade_nome || func.unidade?.nome}</td>
+                <td>
+                  <div style={{display: 'flex', gap: '0.5rem'}}>
+                    <button 
+                      className="btn btn-outline btn-small"
+                      onClick={() => onEdit(func)}
+                    >
+                      ✏️ Editar
+                    </button>
+                    <button 
+                      className="btn btn-danger btn-small"
+                      onClick={() => onDelete(func.id)}
+                    >
+                      🗑️ Excluir
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {funcionarios.length === 0 && (
@@ -508,111 +575,28 @@ function FuncionariosTab({
   )
 }
 
-// Componente do card de funcionário
-function FuncionarioCard({ funcionario, onEdit, onDelete }) {
-  const handleEmailClick = () => {
-    if (funcionario.email) {
-      window.open(`mailto:${funcionario.email}`, '_blank')
-    }
-  }
-
-  const handleRamalClick = () => {
-    if (funcionario.ramal) {
-      window.open(`https://www.microsip.org/`, '_blank')
-    }
-  }
-
-  const handleWhatsAppClick = () => {
-    if (funcionario.whatsapp) {
-      const numero = funcionario.whatsapp.replace(/\D/g, '')
-      window.open(`https://wa.me/55${numero}`, '_blank')
-    }
-  }
-
-  return (
-    <div className="card">
-      <div className="card-header">
-        <div>
-          <h3 className="card-title">{funcionario.nome}</h3>
-          {funcionario.unidade && (
-            <span className={`badge ${funcionario.unidade.toLowerCase().includes('chiaperini') ? 'badge-chiaperini' : 'badge-techto'}`}>
-              {funcionario.unidade}
-            </span>
-          )}
-        </div>
-        {(onEdit || onDelete) && (
-          <div className="card-actions">
-            {onEdit && (
-              <button className="btn btn-outline btn-small" onClick={() => onEdit(funcionario)}>
-                ✏️
-              </button>
-            )}
-            {onDelete && (
-              <button className="btn btn-danger btn-small" onClick={() => onDelete(funcionario.id)}>
-                🗑️
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="card-info">
-        {funcionario.departamento && (
-          <div className="info-item">
-            <span className="info-label">Depto:</span>
-            <span className="info-value">{funcionario.departamento}</span>
-          </div>
-        )}
-        
-        {funcionario.funcao && (
-          <div className="info-item">
-            <span className="info-label">Função:</span>
-            <span className="info-value">{funcionario.funcao}</span>
-          </div>
-        )}
-
-        {funcionario.ramal && (
-          <div className="info-item">
-            <span className="info-label">Ramal:</span>
-            <button className="btn btn-outline btn-small" onClick={handleRamalClick}>
-              📞 {funcionario.ramal}
-            </button>
-          </div>
-        )}
-
-        {funcionario.email && (
-          <div className="info-item">
-            <span className="info-label">Email:</span>
-            <button className="btn btn-outline btn-small" onClick={handleEmailClick}>
-              📧 {funcionario.email}
-            </button>
-          </div>
-        )}
-
-        {funcionario.whatsapp && (
-          <div className="info-item">
-            <span className="info-label">WhatsApp:</span>
-            <button className="btn btn-success btn-small" onClick={handleWhatsAppClick}>
-              💬 {funcionario.whatsapp}
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
 // Componente do formulário de funcionário
 function FuncionarioForm({ formData, setFormData, departamentos, funcoes, unidades }) {
   return (
     <>
       <div className="form-group">
-        <label className="form-label">Nome *</label>
+        <label className="form-label">Nome Completo</label>
         <input
           type="text"
           className="form-input"
           value={formData.nome || ''}
           onChange={(e) => setFormData({...formData, nome: e.target.value})}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">Email</label>
+        <input
+          type="email"
+          className="form-input"
+          value={formData.email || ''}
+          onChange={(e) => setFormData({...formData, email: e.target.value})}
           required
         />
       </div>
@@ -624,27 +608,7 @@ function FuncionarioForm({ formData, setFormData, departamentos, funcoes, unidad
           className="form-input"
           value={formData.ramal || ''}
           onChange={(e) => setFormData({...formData, ramal: e.target.value})}
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Email</label>
-        <input
-          type="email"
-          className="form-input"
-          value={formData.email || ''}
-          onChange={(e) => setFormData({...formData, email: e.target.value})}
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">WhatsApp</label>
-        <input
-          type="text"
-          className="form-input"
-          placeholder="(11) 99999-9999"
-          value={formData.whatsapp || ''}
-          onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
+          required
         />
       </div>
 
@@ -652,8 +616,9 @@ function FuncionarioForm({ formData, setFormData, departamentos, funcoes, unidad
         <label className="form-label">Departamento</label>
         <select
           className="form-select"
-          value={formData.departamento_id || ''}
+          value={formData.departamento_id || formData.departamento || ''}
           onChange={(e) => setFormData({...formData, departamento_id: e.target.value})}
+          required
         >
           <option value="">Selecione...</option>
           {departamentos.map(dept => (
@@ -666,8 +631,9 @@ function FuncionarioForm({ formData, setFormData, departamentos, funcoes, unidad
         <label className="form-label">Função</label>
         <select
           className="form-select"
-          value={formData.funcao_id || ''}
+          value={formData.funcao_id || formData.funcao || ''}
           onChange={(e) => setFormData({...formData, funcao_id: e.target.value})}
+          required
         >
           <option value="">Selecione...</option>
           {funcoes.map(func => (
@@ -680,8 +646,9 @@ function FuncionarioForm({ formData, setFormData, departamentos, funcoes, unidad
         <label className="form-label">Unidade</label>
         <select
           className="form-select"
-          value={formData.unidade_id || ''}
+          value={formData.unidade_id || formData.unidade || ''}
           onChange={(e) => setFormData({...formData, unidade_id: e.target.value})}
+          required
         >
           <option value="">Selecione...</option>
           {unidades.map(unid => (
@@ -782,4 +749,3 @@ function Modal({ title, children, onClose }) {
 }
 
 export default App
-

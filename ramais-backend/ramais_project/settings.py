@@ -154,7 +154,17 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Login/Logout URLs
+# URLs de redirecionamento após login/logout
+LOGIN_REDIRECT_URL = '/api/'
+LOGOUT_REDIRECT_URL = '/api/'
 LOGIN_URL = '/api-auth/login/'
 LOGOUT_URL = '/api-auth/logout/'
+
+# Modelo de usuário customizado
 AUTH_USER_MODEL = 'ramais.Usuario'
+
+# CSRF settings para desenvolvimento
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
