@@ -103,7 +103,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-orange) 100%);
+  background: rgb(0, 0, 36);
 }
 
 .login-form {
@@ -185,6 +185,9 @@ body {
 .btn-primary {
   background: var(--primary-blue);
   color: var(--white);
+  display: flex;
+  justify-content: center;
+  
 }
 
 .btn-primary:hover {
