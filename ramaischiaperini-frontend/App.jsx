@@ -1,9 +1,9 @@
 import './App.css'
-import { useAuth } from './hooks/useAuth'
-import { useMessage } from './hooks/useMessage'
-import LoginPage from './pages/LoginPage'
-import Dashboard from './pages/Dashboard'
-import LoadingSpinner from './components/common/LoadingSpinner'
+import { useAuth } from './src/hooks/useAuth'
+import { useMessage } from './src/hooks/useMessage'
+import LoginPage from './src/pages/LoginPage'
+import Dashboard from './src/pages/Dashboard'
+import LoadingSpinner from './src/components/common/LoadingSpinner'
 
 function App() {
   const { user, loading, login, logout, isAuthenticated } = useAuth()
