@@ -78,7 +78,7 @@ function FuncionariosTab({
       </div>
 
       <div style={{marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <h2>Funcionários ({funcionarios.length})</h2>
+        <h2>Colaboradores ({funcionarios.length})</h2>
         {canEdit && (
           <button className="btn btn-primary" onClick={onAdd}>
             + Adicionar Funcionário

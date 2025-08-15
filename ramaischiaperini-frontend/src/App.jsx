@@ -1,4 +1,4 @@
-import '../App.css'
+import './styles/main.css'
 import { useAuth } from './hooks/useAuth'
 import { useMessage } from './hooks/useMessage'
 import LoginPage from './pages/LoginPage'

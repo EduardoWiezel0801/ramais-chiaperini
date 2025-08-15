@@ -56,7 +56,7 @@ function ConfiguracoesTab({
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Funcionários</th>
+              <th>Colaboradores</th>
               {canEdit && <th>Ações</th>}
             </tr>
           </thead>

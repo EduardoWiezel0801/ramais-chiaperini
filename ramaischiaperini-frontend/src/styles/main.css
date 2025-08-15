@@ -152,58 +152,28 @@
   text-decoration: underline;
 }
 
-.contact-link.email::before {
-  content: "📧";
-  font-size: var(--text-sm);
-}
-
-.contact-link.whatsapp::before {
-  content: "📱";
-  font-size: var(--text-sm);
-}
-
-.contact-link.phone::before {
-  content: "📞";
-  font-size: var(--text-sm);
-}
-
-/* Filtros de busca customizados */
-.search-filters-ramais {
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow);
-  position: relative;
-}
-
-.search-filters-ramais::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--chiaperini-blue), var(--techto-yellow));
-  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-}
-
-/* Estatísticas do dashboard */
+/* Dashboard Stats específicos */
 .dashboard-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-xl);
-  margin-bottom: var(--spacing-2xl);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
 }
 
 .stat-card-ramais {
   background: var(--white);
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow);
   padding: var(--spacing-xl);
-  text-align: center;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--gray-200);
+  transition: var(--transition);
   position: relative;
   overflow: hidden;
-  transition: var(--transition);
+}
+
+.stat-card-ramais:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .stat-card-ramais::before {
@@ -212,18 +182,15 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 3px;
   background: linear-gradient(90deg, var(--chiaperini-blue), var(--techto-yellow));
 }
 
-.stat-card-ramais:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
+/* Ícones dos stats */
 .stat-icon {
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   margin-bottom: var(--spacing-md);
+  display: block;
 }
 
 .stat-icon.funcionarios::before {
@@ -396,29 +363,6 @@
   .funcionario-card:hover,
   .stat-card-ramais:hover {
     transform: none !important;
-  }
-}
-
-/* ===========================================
-   10. DARK MODE SUPPORT (Se necessário no futuro)
-   =========================================== */
-
-@media (prefers-color-scheme: dark) {
-  .ramais-system {
-    background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
-  }
-  
-  .funcionario-card,
-  .stat-card-ramais,
-  .config-section {
-    background: var(--gray-800);
-    border-color: var(--gray-600);
-    color: var(--gray-100);
-  }
-  
-  .ramal-display {
-    background: var(--gray-700);
-    color: var(--gray-100);
   }
 }
 

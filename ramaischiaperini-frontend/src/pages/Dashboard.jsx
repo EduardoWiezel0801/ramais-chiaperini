@@ -149,7 +149,7 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
           className={`nav-tab ${activeTab === 'funcionarios' ? 'active' : ''}`}
           onClick={() => setActiveTab('funcionarios')}
         >
-          👥 Funcionários
+          👥 Colaboradores
         </button>
         { canEdit && (
         <button
