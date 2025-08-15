@@ -1,0 +1,427 @@
+/* Main CSS File - Sistema de Ramais Chiaperini */
+/* Este arquivo importa todos os componentes CSS de forma organizada */
+
+/* ===========================================
+   1. BASE STYLES (Fundação)
+   =========================================== */
+
+/* Variáveis CSS - Sempre primeiro */
+@import './base/variables.css';
+
+/* Reset e configurações básicas */
+@import './base/reset.css';
+
+/* Tipografia */
+@import './base/typography.css';
+
+/* ===========================================
+   2. LAYOUT (Estrutura)
+   =========================================== */
+
+/* Layout principal da aplicação */
+@import './layout/main.css';
+
+/* Header/Cabeçalho */
+@import './layout/header.css';
+
+/* Navegação */
+@import './layout/navigation.css';
+
+/* ===========================================
+   3. COMPONENTS (Componentes reutilizáveis)
+   =========================================== */
+
+/* Botões */
+@import './components/buttons.css';
+
+/* Formulários */
+@import './components/forms.css';
+
+/* Cards */
+@import './components/cards.css';
+
+/* Tabelas */
+@import './components/tables.css';
+
+/* Modais */
+@import './components/modals.css';
+
+/* Alertas */
+@import './components/alerts.css';
+
+/* Badges */
+@import './components/badges.css';
+
+/* Loading/Carregamento */
+@import './components/loading.css';
+
+/* ===========================================
+   4. PAGES (Páginas específicas)
+   =========================================== */
+
+/* Página de Login */
+@import './pages/login.css';
+
+/* ===========================================
+   5. UTILITIES (Utilitários)
+   =========================================== */
+
+/* Animações */
+@import './utils/animations.css';
+
+/* Responsividade */
+@import './utils/responsive.css';
+
+/* ===========================================
+   6. CUSTOM STYLES (Estilos específicos do projeto)
+   =========================================== */
+
+/* Estilos específicos para o sistema de ramais */
+.ramais-system {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+}
+
+/* Tema Chiaperini */
+.theme-chiaperini {
+  --primary-color: var(--chiaperini-blue);
+  --secondary-color: var(--techto-red);
+  --accent-color: var(--techto-yellow);
+}
+
+/* Header customizado para o sistema */
+.ramais-header {
+  background: linear-gradient(135deg, var(--chiaperini-blue) 0%, var(--chiaperini-dark) 100%);
+}
+
+/* Cards de funcionários customizados */
+.funcionario-card {
+  transition: var(--transition);
+  border-left: 4px solid transparent;
+}
+
+.funcionario-card:hover {
+  border-left-color: var(--chiaperini-blue);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.funcionario-card.chiaperini {
+  border-left-color: var(--chiaperini-blue);
+}
+
+.funcionario-card.techto {
+  border-left-color: var(--techto-red);
+}
+
+/* Status indicators específicos */
+.status-ativo {
+  color: var(--success);
+}
+
+.status-inativo {
+  color: var(--gray-400);
+}
+
+/* Ramal styling específico */
+.ramal-display {
+  font-family: 'Courier New', monospace;
+  font-weight: var(--font-bold);
+  color: var(--chiaperini-blue);
+  background: var(--gray-100);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-sm);
+  display: inline-block;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Links de contato estilizados */
+.contact-link {
+  color: var(--chiaperini-blue);
+  text-decoration: none;
+  transition: var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.contact-link:hover {
+  color: var(--chiaperini-dark);
+  text-decoration: underline;
+}
+
+.contact-link.email::before {
+  content: "📧";
+  font-size: var(--text-sm);
+}
+
+.contact-link.whatsapp::before {
+  content: "📱";
+  font-size: var(--text-sm);
+}
+
+.contact-link.phone::before {
+  content: "📞";
+  font-size: var(--text-sm);
+}
+
+/* Filtros de busca customizados */
+.search-filters-ramais {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.search-filters-ramais::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--chiaperini-blue), var(--techto-yellow));
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+/* Estatísticas do dashboard */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.stat-card-ramais {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  padding: var(--spacing-xl);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.stat-card-ramais::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--chiaperini-blue), var(--techto-yellow));
+}
+
+.stat-card-ramais:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.stat-icon.funcionarios::before {
+  content: "👥";
+}
+
+.stat-icon.departamentos::before {
+  content: "🏢";
+}
+
+.stat-icon.ramais::before {
+  content: "📞";
+}
+
+.stat-icon.unidades::before {
+  content: "🏭";
+}
+
+/* Configurações específicas para diferentes telas */
+.config-section {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  margin-bottom: var(--spacing-xl);
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+}
+
+.config-section-header {
+  background: linear-gradient(135deg, var(--gray-50), var(--white));
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.config-section-title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--gray-800);
+}
+
+/* Mensagens de feedback específicas */
+.feedback-success {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+  border-left: 4px solid var(--success);
+  color: #065f46;
+}
+
+.feedback-error {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+  border-left: 4px solid var(--error);
+  color: #7f1d1d;
+}
+
+/* Scrollbar customizada para o tema */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--chiaperini-blue), var(--chiaperini-dark));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--chiaperini-dark), var(--chiaperini-blue));
+}
+
+/* ===========================================
+   7. RESPONSIVE OVERRIDES (Sobrescritas responsivas)
+   =========================================== */
+
+/* Mobile específico para o sistema */
+@media (max-width: 768px) {
+  .ramais-system {
+    padding: 0;
+  }
+  
+  .funcionario-card {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .contact-link {
+    font-size: var(--text-sm);
+  }
+  
+  .ramal-display {
+    min-width: 50px;
+    font-size: var(--text-xs);
+  }
+}
+
+/* Tablet específico */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===========================================
+   8. PRINT STYLES (Estilos de impressão)
+   =========================================== */
+
+@media print {
+  .ramais-system {
+    background: var(--white) !important;
+  }
+  
+  .funcionario-card,
+  .stat-card-ramais,
+  .config-section {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid var(--gray-400) !important;
+  }
+  
+  .contact-link::before {
+    display: none !important;
+  }
+  
+  .search-filters-ramais {
+    display: none !important;
+  }
+}
+
+/* ===========================================
+   9. ACCESSIBILITY (Acessibilidade)
+   =========================================== */
+
+/* Focus customizado para o tema */
+*:focus {
+  outline: 2px solid var(--chiaperini-blue);
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .funcionario-card,
+  .stat-card-ramais,
+  .config-section {
+    border-width: 2px !important;
+  }
+  
+  .ramal-display {
+    border: 2px solid var(--chiaperini-blue);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .funcionario-card,
+  .stat-card-ramais,
+  .contact-link {
+    transition: none !important;
+  }
+  
+  .funcionario-card:hover,
+  .stat-card-ramais:hover {
+    transform: none !important;
+  }
+}
+
+/* ===========================================
+   10. DARK MODE SUPPORT (Se necessário no futuro)
+   =========================================== */
+
+@media (prefers-color-scheme: dark) {
+  .ramais-system {
+    background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+  }
+  
+  .funcionario-card,
+  .stat-card-ramais,
+  .config-section {
+    background: var(--gray-800);
+    border-color: var(--gray-600);
+    color: var(--gray-100);
+  }
+  
+  .ramal-display {
+    background: var(--gray-700);
+    color: var(--gray-100);
+  }
+}
+
+/* ===========================================
+   FIM DO ARQUIVO PRINCIPAL
+   =========================================== */
