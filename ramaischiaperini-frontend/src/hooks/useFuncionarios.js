@@ -24,11 +24,23 @@ export function useFuncionarios() {
   // Carregar todos os dados
   const loadAllData = async () => {
     try {
-      const queryParams = {
-        busca: busca || '',
-        departamento_id: filtros.departamento_id || '',
-        funcao_id: filtros.funcao_id || '',
-        unidade_id: filtros.unidade_id || ''
+      // Construir parâmetros de busca - apenas incluir se não estiverem vazios
+      const queryParams = {}
+      
+      if (busca.trim()) {
+        queryParams.busca = busca.trim()
+      }
+      
+      if (filtros.departamento_id) {
+        queryParams.departamento_id = filtros.departamento_id
+      }
+      
+      if (filtros.funcao_id) {
+        queryParams.funcao_id = filtros.funcao_id
+      }
+      
+      if (filtros.unidade_id) {
+        queryParams.unidade_id = filtros.unidade_id
       }
 
       const [funcData, deptData, funcaoData, unidData] = await Promise.all([
@@ -60,7 +72,18 @@ export function useFuncionarios() {
 
   // CRUD Funcionários
   const createFuncionario = async (data) => {
-    const response = await funcionarioService.create(data)
+    // Garantir que os IDs sejam enviados corretamente
+    const payload = {
+      nome: data.nome,
+      email: data.email || '',
+      ramal: data.ramal || '',
+      whatsapp: data.whatsapp || '',
+      departamento: data.departamento || data.departamento_id,
+      funcao: data.funcao || data.funcao_id,
+      unidade: data.unidade || data.unidade_id
+    }
+
+    const response = await funcionarioService.create(payload)
     if (response.ok) {
       await loadAllData()
       return { success: true }
@@ -72,7 +95,18 @@ export function useFuncionarios() {
   }
 
   const updateFuncionario = async (id, data) => {
-    const response = await funcionarioService.update(id, data)
+    // Garantir que os IDs sejam enviados corretamente
+    const payload = {
+      nome: data.nome,
+      email: data.email || '',
+      ramal: data.ramal || '',
+      whatsapp: data.whatsapp || '',
+      departamento: data.departamento || data.departamento_id,
+      funcao: data.funcao || data.funcao_id,
+      unidade: data.unidade || data.unidade_id
+    }
+
+    const response = await funcionarioService.update(id, payload)
     if (response.ok) {
       await loadAllData()
       return { success: true }

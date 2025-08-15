@@ -34,7 +34,6 @@ function FuncionarioForm({
             className="form-input"
             value={formData.email || ''}
             onChange={(e) => setFormData({...formData, email: e.target.value})}
-            required
           />
         </div>
 
@@ -45,7 +44,6 @@ function FuncionarioForm({
             className="form-input"
             value={formData.ramal || ''}
             onChange={(e) => setFormData({...formData, ramal: e.target.value})}
-            required
           />
         </div>
 
@@ -64,8 +62,8 @@ function FuncionarioForm({
           <label className="form-label">Departamento</label>
           <select
             className="form-select"
-            value={formData.departamento_id || formData.departamento || ''}
-            onChange={(e) => setFormData({...formData, departamento_id: e.target.value})}
+            value={formData.departamento || formData.departamento_id || ''}
+            onChange={(e) => setFormData({...formData, departamento: e.target.value, departamento_id: e.target.value})}
             required
           >
             <option value="">Selecione...</option>
@@ -79,8 +77,8 @@ function FuncionarioForm({
           <label className="form-label">Função</label>
           <select
             className="form-select"
-            value={formData.funcao_id || formData.funcao || ''}
-            onChange={(e) => setFormData({...formData, funcao_id: e.target.value})}
+            value={formData.funcao || formData.funcao_id || ''}
+            onChange={(e) => setFormData({...formData, funcao: e.target.value, funcao_id: e.target.value})}
             required
           >
             <option value="">Selecione...</option>
@@ -94,8 +92,8 @@ function FuncionarioForm({
           <label className="form-label">Unidade</label>
           <select
             className="form-select"
-            value={formData.unidade_id || formData.unidade || ''}
-            onChange={(e) => setFormData({...formData, unidade_id: e.target.value})}
+            value={formData.unidade || formData.unidade_id || ''}
+            onChange={(e) => setFormData({...formData, unidade: e.target.value, unidade_id: e.target.value})}
             required
           >
             <option value="">Selecione...</option>

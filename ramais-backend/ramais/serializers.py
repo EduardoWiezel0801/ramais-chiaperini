@@ -157,7 +157,7 @@ class UnidadeSerializer(serializers.ModelSerializer):
 
 class FuncionarioSerializer(serializers.ModelSerializer):
     """
-    Serializer para modelo Funcionario
+    Serializer para modelo Funcionario - usado para CREATE/UPDATE
     """
     # Campos read-only para mostrar nomes dos relacionamentos
     departamento_nome = serializers.CharField(source='departamento.nome', read_only=True)
@@ -198,9 +198,9 @@ class FuncionarioListSerializer(serializers.ModelSerializer):
     """
     Serializer simplificado para listagem de funcionários
     """
-    departamento_nome = serializers.CharField(source='departamento.nome', read_only=True)
-    funcao_nome = serializers.CharField(source='funcao.nome', read_only=True)
-    unidade_nome = serializers.CharField(source='unidade.nome', read_only=True)
+    departamento_nome = serializers.SerializerMethodField()
+    funcao_nome = serializers.SerializerMethodField()
+    unidade_nome = serializers.SerializerMethodField()
     
     class Meta:
         model = Funcionario
@@ -208,3 +208,15 @@ class FuncionarioListSerializer(serializers.ModelSerializer):
             'id', 'nome', 'ramal', 'email', 'whatsapp',
             'departamento_nome', 'funcao_nome', 'unidade_nome'
         ]
+    
+    def get_departamento_nome(self, obj):
+        """Retorna o nome do departamento ou None"""
+        return obj.departamento.nome if obj.departamento else None
+    
+    def get_funcao_nome(self, obj):
+        """Retorna o nome da função ou None"""
+        return obj.funcao.nome if obj.funcao else None
+    
+    def get_unidade_nome(self, obj):
+        """Retorna o nome da unidade ou None"""
+        return obj.unidade.nome if obj.unidade else None

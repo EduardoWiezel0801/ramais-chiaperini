@@ -9,6 +9,7 @@ class Usuario(AbstractUser):
     is_admin = models.BooleanField(default=False, verbose_name='É Administrador')
     ativo = models.BooleanField(default=True, verbose_name='Ativo')
     can_edit = models.BooleanField(default=True, verbose_name='Pode Editar')
+    
     class Meta:
         verbose_name = 'Usuário'
         verbose_name_plural = 'Usuários'
@@ -123,51 +124,4 @@ class Funcionario(models.Model):
     def unidade_nome(self):
         """Retorna o nome da unidade ou None"""
         return self.unidade.nome if self.unidade else None
-    # Relacionamentos com chaves estrangeiras
-    departamento = models.ForeignKey(
-        Departamento, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        related_name='funcionarios',
-        verbose_name='Departamento'
-    )
-    funcao = models.ForeignKey(
-        Funcao, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        related_name='funcionarios',
-        verbose_name='Função'
-    )
-    unidade = models.ForeignKey(
-        Unidade, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        related_name='funcionarios',
-        verbose_name='Unidade'
-    )
-    
-    class Meta:
-        verbose_name = 'Funcionário'
-        verbose_name_plural = 'Funcionários'
-        ordering = ['nome']
-    
-    def __str__(self):
-        return self.nome
-    
-    @property
-    def departamento_nome(self):
-        """Retorna o nome do departamento ou None"""
-        return self.departamento.nome if self.departamento else None
-    
-    @property
-    def funcao_nome(self):
-        """Retorna o nome da função ou None"""
-        return self.funcao.nome if self.funcao else None
-    
-    @property
-    def unidade_nome(self):
-        """Retorna o nome da unidade ou None"""
-        return self.unidade.nome if self.unidade else None
+

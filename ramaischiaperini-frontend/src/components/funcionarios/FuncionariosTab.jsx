@@ -80,9 +80,9 @@ function FuncionariosTab({
       <div style={{marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <h2>Funcionários ({funcionarios.length})</h2>
         {canEdit && (
-                  <button className="btn btn-primary" onClick={onAdd}>
-                    + Adicionar Funcionário
-                  </button>
+          <button className="btn btn-primary" onClick={onAdd}>
+            + Adicionar Funcionário
+          </button>
         )}
       </div>
 
@@ -97,8 +97,7 @@ function FuncionariosTab({
               <th>Departamento</th>
               <th>Função</th>
               <th>Unidade</th>
-              { canEdit && <th>Ações</th>}
-              <th>Ações</th>
+              {canEdit && <th>Ações</th>}
             </tr>
           </thead>
           <tbody>
@@ -108,17 +107,17 @@ function FuncionariosTab({
                   <div className="employee-name">{func.nome}</div>
                 </td>
                 <td>
-                  <span className="ramal-number">{func.ramal}</span>
+                  <span className="ramal-number">{func.ramal || '-'}</span>
                 </td>
                 <td>
-                  {func.email && (
+                  {func.email ? (
                     <a href={`mailto:${func.email}`} className="info-value">
                       {func.email}
                     </a>
-                  )}
+                  ) : '-'}
                 </td>
                 <td>
-                  {func.whatsapp && (
+                  {func.whatsapp ? (
                     <a 
                       href={`https://wa.me/55${func.whatsapp.replace(/\D/g, '')}`}
                       target="_blank"
@@ -127,15 +126,17 @@ function FuncionariosTab({
                     >
                       {func.whatsapp}
                     </a>
-                  )}
+                  ) : '-'}
                 </td>
                 <td>
-                  <span className={`badge badge-${func.departamento_nome === 'Chiaperini' ? 'chiaperini' : 'techto'}`}>
-                    {func.departamento_nome || func.departamento?.nome}
-                  </span>
+                  {func.departamento_nome ? (
+                    <span className={`badge badge-${func.departamento_nome === 'Chiaperini' ? 'chiaperini' : 'techto'}`}>
+                      {func.departamento_nome}
+                    </span>
+                  ) : '-'}
                 </td>
-                <td>{func.funcao_nome || func.funcao?.nome}</td>
-                <td>{func.unidade_nome || func.unidade?.nome}</td>
+                <td>{func.funcao_nome || '-'}</td>
+                <td>{func.unidade_nome || '-'}</td>
                 {canEdit && (
                   <td>
                     <div style={{display: 'flex', gap: '0.5rem'}}>
@@ -154,7 +155,6 @@ function FuncionariosTab({
                     </div>
                   </td>
                 )}
-                
               </tr>
             ))}
           </tbody>

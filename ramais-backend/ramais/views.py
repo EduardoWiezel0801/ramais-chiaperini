@@ -202,7 +202,7 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
     serializer_class = FuncionarioSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    queryset = Funcionario.objects.filter(ativo=True)
+    filterset_fields = ['departamento', 'funcao', 'unidade', 'ativo']
     search_fields = ['nome', 'ramal', 'email', 'whatsapp']
     ordering_fields = ['nome', 'ramal']
     ordering = ['nome']
@@ -227,58 +227,43 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         """Aplicar filtros de busca customizada"""
-        queryset = Funcionario.objects.filter(ativo=True)
+        # Começar com queryset base
+        queryset = Funcionario.objects.filter(ativo=True).select_related('departamento', 'funcao', 'unidade')
         
-        # Busca customizada que funciona em todos os campos
-        busca = self.request.query_params.get('busca', None)
-        if busca:
-            queryset = queryset.filter(
-                Q(nome__icontains=busca) |
-                Q(ramal__icontains=busca) |
-                Q(email__icontains=busca) |
-                Q(whatsapp__icontains=busca) |
-                Q(departamento__nome__icontains=busca) |
-                Q(funcao__nome__icontains=busca) |
-                Q(unidade__nome__icontains=busca)
-            )
+        # Aplicar filtros apenas se existirem
+        try:
+            # Busca customizada
+            busca = self.request.query_params.get('busca')
+            if busca and busca.strip():
+                queryset = queryset.filter(
+                    Q(nome__icontains=busca) |
+                    Q(ramal__icontains=busca) |
+                    Q(email__icontains=busca) |
+                    Q(whatsapp__icontains=busca) |
+                    Q(departamento__nome__icontains=busca) |
+                    Q(funcao__nome__icontains=busca) |
+                    Q(unidade__nome__icontains=busca)
+                )
+            
+            # Filtros específicos
+            departamento_id = self.request.query_params.get('departamento_id')
+            if departamento_id and departamento_id.strip():
+                queryset = queryset.filter(departamento_id=departamento_id)
+                
+            funcao_id = self.request.query_params.get('funcao_id')
+            if funcao_id and funcao_id.strip():
+                queryset = queryset.filter(funcao_id=funcao_id)
+                
+            unidade_id = self.request.query_params.get('unidade_id')
+            if unidade_id and unidade_id.strip():
+                queryset = queryset.filter(unidade_id=unidade_id)
+                
+        except Exception as e:
+            # Se der erro nos filtros, retornar queryset base
+            print(f"Erro ao aplicar filtros: {e}")
+            queryset = Funcionario.objects.filter(ativo=True).select_related('departamento', 'funcao', 'unidade')
         
-        return queryset.select_related('departamento', 'funcao', 'unidade')
-    
-    @action(detail=False, methods=['get'])
-    def search(self, request):
-        """Endpoint customizado para busca avançada"""
-        busca = request.query_params.get('q', '')
-        departamento_id = request.query_params.get('departamento_id')
-        funcao_id = request.query_params.get('funcao_id')
-        unidade_id = request.query_params.get('unidade_id')
-        
-        queryset = self.get_queryset()
-        
-        # Aplicar busca por texto
-        if busca:
-            queryset = queryset.filter(
-                Q(nome__icontains=busca) |
-                Q(ramal__icontains=busca) |
-                Q(email__icontains=busca) |
-                Q(whatsapp__icontains=busca)
-            )
-        
-        # Aplicar filtros específicos
-        if departamento_id:
-            queryset = queryset.filter(departamento_id=departamento_id)
-        if funcao_id:
-            queryset = queryset.filter(funcao_id=funcao_id)
-        if unidade_id:
-            queryset = queryset.filter(unidade_id=unidade_id)
-        
-        # Paginar resultados
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = FuncionarioListSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        
-        serializer = FuncionarioListSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return queryset
     
     def perform_destroy(self, instance):
         """Soft delete - apenas marca como inativo"""
