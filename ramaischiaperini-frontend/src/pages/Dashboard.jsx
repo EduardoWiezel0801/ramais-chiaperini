@@ -15,6 +15,8 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
   const [editingItem, setEditingItem] = useState(null)
   const [formData, setFormData] = useState({})
 
+  const canEdit = user.is_admin || user.can_edit;
+
   // Hook para gerenciar funcionários e dados relacionados
   const {
     funcionarios,
@@ -42,6 +44,10 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
 
   // Funções para modais
   const openModal = (type, item = null) => {
+    if (!canEdit) {
+      showMessage('error', 'Você não tem permissão para realizar esta ação.')
+      return
+    }
     setModalType(type)
     setEditingItem(item)
     setFormData(item || {})
@@ -91,6 +97,10 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
 
   // Função genérica para deletar itens
   const deleteItem = async (type, id) => {
+    if (!canEdit){
+      showMessage('error', 'Você não tem permissão para realizar esta ação.')
+      return
+    }
     if (!confirm('Tem certeza que deseja excluir?')) return
 
     try {
@@ -141,12 +151,14 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
         >
           👥 Funcionários
         </button>
+        { canEdit && (
         <button
           className={`nav-tab ${activeTab === 'configuracoes' ? 'active' : ''}`}
           onClick={() => setActiveTab('configuracoes')}
         >
           ⚙️ Configurações
         </button>
+        )}
       </div>
 
       {activeTab === 'funcionarios' && (
@@ -163,10 +175,11 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
           onEdit={(item) => openModal('funcionario', item)}
           onDelete={(id) => deleteItem('funcionario', id)}
           onAdd={() => openModal('funcionario')}
+          user={user}
         />
       )}
 
-      {activeTab === 'configuracoes' && (
+      {activeTab === 'configuracoes' && canEdit && (
         <ConfiguracoesTab
           departamentos={departamentos}
           funcoes={funcoes}
@@ -174,6 +187,7 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
           onEdit={(type, item) => openModal(type, item)}
           onDelete={deleteItem}
           onAdd={(type) => openModal(type)}
+          user={user}
         />
       )}
 

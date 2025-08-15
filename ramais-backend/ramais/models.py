@@ -8,7 +8,7 @@ class Usuario(AbstractUser):
     """
     is_admin = models.BooleanField(default=False, verbose_name='É Administrador')
     ativo = models.BooleanField(default=True, verbose_name='Ativo')
-    
+    can_edit = models.BooleanField(default=True, verbose_name='Pode Editar')
     class Meta:
         verbose_name = 'Usuário'
         verbose_name_plural = 'Usuários'

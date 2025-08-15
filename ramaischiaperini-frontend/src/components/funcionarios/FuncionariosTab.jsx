@@ -10,8 +10,12 @@ function FuncionariosTab({
   clearFilters, 
   onEdit, 
   onDelete, 
-  onAdd 
+  onAdd,
+  user
 }) {
+
+  const canEdit = user.is_admin || user.can_edit;
+
   return (
     <>
       <div className="search-filters">
@@ -75,9 +79,11 @@ function FuncionariosTab({
 
       <div style={{marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <h2>Funcionários ({funcionarios.length})</h2>
-        <button className="btn btn-primary" onClick={onAdd}>
-          + Adicionar Funcionário
-        </button>
+        {canEdit && (
+                  <button className="btn btn-primary" onClick={onAdd}>
+                    + Adicionar Funcionário
+                  </button>
+        )}
       </div>
 
       <div className="table-container">
@@ -91,6 +97,7 @@ function FuncionariosTab({
               <th>Departamento</th>
               <th>Função</th>
               <th>Unidade</th>
+              { canEdit && <th>Ações</th>}
               <th>Ações</th>
             </tr>
           </thead>
@@ -129,22 +136,25 @@ function FuncionariosTab({
                 </td>
                 <td>{func.funcao_nome || func.funcao?.nome}</td>
                 <td>{func.unidade_nome || func.unidade?.nome}</td>
-                <td>
-                  <div style={{display: 'flex', gap: '0.5rem'}}>
-                    <button 
-                      className="btn btn-outline btn-small"
-                      onClick={() => onEdit(func)}
-                    >
-                      ✏️ Editar
-                    </button>
-                    <button 
-                      className="btn btn-danger btn-small"
-                      onClick={() => onDelete(func.id)}
-                    >
-                      🗑️ Excluir
-                    </button>
-                  </div>
-                </td>
+                {canEdit && (
+                  <td>
+                    <div style={{display: 'flex', gap: '0.5rem'}}>
+                      <button 
+                        className="btn btn-outline btn-small"
+                        onClick={() => onEdit(func)}
+                      >
+                        ✏️ Editar
+                      </button>
+                      <button 
+                        className="btn btn-danger btn-small"
+                        onClick={() => onDelete(func.id)}
+                      >
+                        🗑️ Excluir
+                      </button>
+                    </div>
+                  </td>
+                )}
+                
               </tr>
             ))}
           </tbody>

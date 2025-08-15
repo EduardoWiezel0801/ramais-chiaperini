@@ -53,8 +53,7 @@ function LoginPage({ onLogin, message }) {
         </button>
 
         <div style={{marginTop: '1rem', fontSize: '0.875rem', color: '#64748b', textAlign: 'center'}}>
-          <p><strong>Admin:</strong> admin / admin123</p>
-          <p><strong>Usuário:</strong> usuario / user123</p>
+          <p>Ramais</p>
         </div>
       </form>
     </div>

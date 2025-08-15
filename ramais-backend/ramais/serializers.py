@@ -14,7 +14,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name',
-            'is_admin', 'ativo', 'date_joined', 'last_login',
+            'is_admin', 'ativo','can_edit', 'date_joined', 'last_login',
             'password', 'password_confirm'
         ]
         extra_kwargs = {

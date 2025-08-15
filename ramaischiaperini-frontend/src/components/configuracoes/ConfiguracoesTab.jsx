@@ -1,7 +1,18 @@
 import { useState } from 'react'
 
-function ConfiguracoesTab({ departamentos, funcoes, unidades, onEdit, onDelete, onAdd }) {
+function ConfiguracoesTab({ 
+  departamentos, 
+  funcoes, 
+  unidades, 
+  onEdit, 
+  onDelete, 
+  onAdd,
+  user
+}) {
   const [activeConfig, setActiveConfig] = useState('departamentos')
+
+  // Verificar se usuário pode editar
+  const canEdit = user.is_admin || user.can_edit;
 
   const configs = {
     departamentos: { title: 'Departamentos', data: departamentos },
@@ -30,12 +41,14 @@ function ConfiguracoesTab({ departamentos, funcoes, unidades, onEdit, onDelete, 
 
       <div style={{marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
         <h2>{configs[activeConfig].title} ({configs[activeConfig].data.length})</h2>
-        <button 
-          className="btn btn-primary" 
-          onClick={() => onAdd(activeConfig.slice(0, -1))}
-        >
-          + Adicionar {configs[activeConfig].title.slice(0, -1)}
-        </button>
+        {canEdit && (
+          <button 
+            className="btn btn-primary" 
+            onClick={() => onAdd(activeConfig.slice(0, -1))}
+          >
+            + Adicionar {configs[activeConfig].title.slice(0, -1)}
+          </button>
+        )}
       </div>
 
       <div className="table-container">
@@ -44,7 +57,7 @@ function ConfiguracoesTab({ departamentos, funcoes, unidades, onEdit, onDelete, 
             <tr>
               <th>Nome</th>
               <th>Funcionários</th>
-              <th>Ações</th>
+              {canEdit && <th>Ações</th>}
             </tr>
           </thead>
           <tbody>
@@ -56,22 +69,24 @@ function ConfiguracoesTab({ departamentos, funcoes, unidades, onEdit, onDelete, 
                     {item.funcionarios_count || 0}
                   </span>
                 </td>
-                <td>
-                  <div style={{display: 'flex', gap: '0.5rem'}}>
-                    <button 
-                      className="btn btn-outline btn-small"
-                      onClick={() => onEdit(activeConfig.slice(0, -1), item)}
-                    >
-                      ✏️ Editar
-                    </button>
-                    <button 
-                      className="btn btn-danger btn-small"
-                      onClick={() => handleDelete(activeConfig.slice(0, -1), item.id)}
-                    >
-                      🗑️ Excluir
-                    </button>
-                  </div>
-                </td>
+                {canEdit && (
+                  <td>
+                    <div style={{display: 'flex', gap: '0.5rem'}}>
+                      <button 
+                        className="btn btn-outline btn-small"
+                        onClick={() => onEdit(activeConfig.slice(0, -1), item)}
+                      >
+                        ✏️ Editar
+                      </button>
+                      <button 
+                        className="btn btn-danger btn-small"
+                        onClick={() => handleDelete(activeConfig.slice(0, -1), item.id)}
+                      >
+                        🗑️ Excluir
+                      </button>
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

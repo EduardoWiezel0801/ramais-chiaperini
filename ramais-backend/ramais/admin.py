@@ -9,22 +9,22 @@ class UsuarioAdmin(UserAdmin):
     """
     Admin para modelo Usuario customizado
     """
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_admin', 'ativo', 'date_joined')
-    list_filter = ('is_admin', 'ativo', 'is_staff', 'is_superuser', 'date_joined')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_admin', 'ativo', 'date_joined','can_edit')
+    list_filter = ('is_admin', 'ativo', 'is_staff', 'is_superuser', 'date_joined','can_edit')
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering = ('username',)
     
     # Campos no formulário de edição
     fieldsets = UserAdmin.fieldsets + (
         ('Configurações Customizadas', {
-            'fields': ('is_admin', 'ativo')
+            'fields': ('is_admin', 'ativo','can_edit')
         }),
     )
     
     # Campos no formulário de criação
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Configurações Customizadas', {
-            'fields': ('is_admin', 'ativo')
+            'fields': ('is_admin', 'ativo','can_edit')
         }),
     )
     
