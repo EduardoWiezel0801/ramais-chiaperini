@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-asdf#FGSgvasgf$5$WGT-change-in-production'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.3.174']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -144,16 +144,30 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20
 }
 
-# CORS settings
+# CORS settings - Configuração flexível para desenvolvimento
 CORS_ALLOWED_ORIGINS = [
-    "http://192.168.3.174:3000",  
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
-# OU para teste, permitir todas as origens:
+# Para desenvolvimento, permitir todas as origens (mais flexível)
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Adicionar também:
+# Permitir credenciais
 CORS_ALLOW_CREDENTIALS = True
+
+# Permitir todos os headers necessários
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # URLs de redirecionamento após login/logout
 LOGIN_REDIRECT_URL = '/api/'
@@ -164,7 +178,15 @@ LOGOUT_URL = '/api-auth/logout/'
 # Modelo de usuário customizado
 AUTH_USER_MODEL = 'ramais.Usuario'
 
-# CSRF settings para desenvolvimento
+# CSRF settings para desenvolvimento - Aceitar qualquer origem local
 CSRF_TRUSTED_ORIGINS = [
-    "http://192.168.3.174:3000"
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
+
+# Para desenvolvimento, desabilitar algumas verificações CSRF
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
