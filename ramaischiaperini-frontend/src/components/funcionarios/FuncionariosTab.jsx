@@ -1,3 +1,5 @@
+import { iniciarLigacao } from '../../utils/microSipHelper';
+
 function FuncionariosTab({ 
   funcionarios, 
   departamentos, 
@@ -107,7 +109,15 @@ function FuncionariosTab({
                   <div className="employee-name">{func.nome}</div>
                 </td>
                 <td>
-                  <span className="ramal-number">{func.ramal || '-'}</span>
+                  {func.ramal ? (
+                    <button 
+                      className="ramal-clickable"
+                      onClick={() => iniciarLigacao(func.ramal)}
+                      title={`Ligar para ramal ${func.ramal}`}
+                    >
+                      {func.ramal}
+                    </button>
+                  ) : '-'}
                 </td>
                 <td>
                   {func.email ? (
@@ -138,8 +148,8 @@ function FuncionariosTab({
                 <td>{func.funcao_nome || '-'}</td>
                 <td>{func.unidade_nome || '-'}</td>
                 {canEdit && (
-                  <td>
-                    <div style={{display: 'flex', gap: '0.5rem'}}>
+                  <td >
+                    <div style={{display: 'flex', justifyContent: "center", gap: '0.5rem', width: "50%"}}>
                       <button 
                         className="btn btn-outline btn-small"
                         onClick={() => onEdit(func)}

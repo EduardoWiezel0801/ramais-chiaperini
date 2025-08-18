@@ -19,6 +19,8 @@
   min-height: 44px; /* Accessibility: minimum touch target */
 }
 
+
+
 /* Button hover effect */
 .btn::before {
   content: '';
@@ -94,6 +96,7 @@
   background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%);
   color: var(--white);
   box-shadow: var(--shadow);
+ 
 }
 
 .btn-danger:hover {
@@ -105,18 +108,22 @@
   background: transparent;
   color: var(--chiaperini-blue);
   border: 2px solid var(--chiaperini-blue);
+  
+  
 }
 
 .btn-outline:hover {
   background: var(--chiaperini-blue);
   color: var(--white);
   transform: translateY(-2px);
+  
 }
 
 .btn-ghost {
   background: transparent;
   color: var(--gray-600);
   border: 2px solid transparent;
+  
 }
 
 .btn-ghost:hover {

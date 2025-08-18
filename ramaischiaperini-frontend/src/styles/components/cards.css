@@ -214,6 +214,28 @@
   border-radius: var(--spacing-xs);
   font-size: var(--text-sm);
   display: inline-block;
+  border: 1px solid var(--gray-300);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-decoration: none;
+}
+
+.ramal-number:hover {
+  background: var(--chiaperini-blue);
+  color: var(--white);
+  border-color: var(--chiaperini-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ramal-number:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.ramal-number:focus {
+  outline: 2px solid var(--chiaperini-blue);
+  outline-offset: 2px;
 }
 
 /* Card Stack */

@@ -146,12 +146,15 @@ REST_FRAMEWORK = {
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://192.168.56.1:5173',  
 ]
 
+# OU para teste, permitir todas as origens:
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Adicionar também:
 CORS_ALLOW_CREDENTIALS = True
 
 # URLs de redirecionamento após login/logout

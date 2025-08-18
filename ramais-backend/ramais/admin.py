@@ -117,7 +117,7 @@ class FuncionarioAdmin(admin.ModelAdmin):
     Admin para modelo Funcionario
     """
     list_display = (
-        'nome', 'ramal', 'email_link', 'whatsapp_link', 
+        'nome', 'ramal_link', 'email_link', 'whatsapp_link', 
         'departamento', 'funcao', 'unidade', 'ativo_badge'
     )
     list_filter = ('ativo', 'departamento', 'funcao', 'unidade')
@@ -159,6 +159,19 @@ class FuncionarioAdmin(admin.ModelAdmin):
                 )
         return '-'
     whatsapp_link.short_description = 'WhatsApp'
+    
+    def ramal_link(self, obj):
+        """Criar link clicável para ramal - inicia ligação via MicroSIP"""
+        if obj.ramal:
+            # Remove caracteres não numéricos
+            numero_limpo = ''.join(filter(str.isdigit, obj.ramal))
+            if numero_limpo:
+                return format_html(
+                    '<a href="sip:{}" title="Ligar para ramal {}" style="color: #2563eb; font-weight: bold; text-decoration: none;">{}</a>',
+                    numero_limpo, obj.ramal, obj.ramal
+                )
+        return '-'
+    ramal_link.short_description = 'Ramal'
     
     def ativo_badge(self, obj):
         """Badge colorido para status ativo"""

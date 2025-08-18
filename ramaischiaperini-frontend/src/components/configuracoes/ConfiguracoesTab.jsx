@@ -73,18 +73,18 @@ function ConfiguracoesTab({
               {canEdit && <th>Ações</th>}
             </tr>
           </thead>
-          <tbody>
+          <tbody >
             {configs[activeConfig].data.map(item => (
               <tr key={item.id}>
                 <td>{item.nome}</td>
-                <td>
+                <td style={{textAlign: 'center'}}>
                   <span className="badge badge-chiaperini">
                     {item.funcionarios_count || 0}
                   </span>
                 </td>
                 {canEdit && (
                   <td>
-                    <div style={{display: 'flex', gap: '0.5rem'}}>
+                    <div style={{display: 'flex', justifyContent: "center", gap: '0.5rem'}}>
                       <button 
                         className="btn btn-outline btn-small"
                         onClick={() => onEdit(pluralToSingular[activeConfig], item)}

@@ -1,5 +1,5 @@
 // URLs da API
-export const API_BASE_URL = 'http://localhost:8000/api'
+export const API_BASE_URL = 'http://192.168.56.1:8000/api'
 
 // Tipos de mensagem
 export const MESSAGE_TYPES = {

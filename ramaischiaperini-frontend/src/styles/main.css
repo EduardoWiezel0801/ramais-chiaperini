@@ -137,6 +137,49 @@
   text-align: center;
 }
 
+/* Estilo para ramal clicável */
+.ramal-clickable {
+  font-family: 'Courier New', monospace;
+  font-weight: var(--font-bold);
+  color: var(--chiaperini-blue);
+  background: var(--gray-100);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--text-sm);
+  border: 1px solid var(--gray-300);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  min-width: 60px;
+  text-align: center;
+}
+
+.ramal-clickable:hover {
+  background: var(--chiaperini-blue);
+  color: var(--white);
+  border-color: var(--chiaperini-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ramal-clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.ramal-clickable:focus {
+  outline: 2px solid var(--chiaperini-blue);
+  outline-offset: 2px;
+}
+
+/* Responsivo para mobile */
+@media (max-width: 768px) {
+  .ramal-clickable {
+    min-width: 50px;
+    font-size: var(--text-xs);
+    padding: calc(var(--spacing-xs) * 0.8) var(--spacing-xs);
+  }
+}
+
 /* Links de contato estilizados */
 .contact-link {
   color: var(--chiaperini-blue);
