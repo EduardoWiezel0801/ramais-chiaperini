@@ -20,6 +20,19 @@ function ConfiguracoesTab({
     unidades: { title: 'Unidades', data: unidades }
   }
 
+  // Mapeamento correto de plural para singular
+  const pluralToSingular = {
+    'departamentos': 'departamento',
+    'funcoes': 'funcao',
+    'unidades': 'unidade'
+  }
+
+  const singularTitles = {
+    'departamentos': 'Departamento',
+    'funcoes': 'Função', 
+    'unidades': 'Unidade'
+  }
+
   const handleDelete = async (type, id) => {
     if (!confirm('Tem certeza que deseja excluir?')) return
     await onDelete(type, id)
@@ -44,9 +57,9 @@ function ConfiguracoesTab({
         {canEdit && (
           <button 
             className="btn btn-primary" 
-            onClick={() => onAdd(activeConfig.slice(0, -1))}
+            onClick={() => onAdd(pluralToSingular[activeConfig])}
           >
-            + Adicionar {configs[activeConfig].title.slice(0, -1)}
+            + Adicionar {singularTitles[activeConfig]}
           </button>
         )}
       </div>
@@ -74,13 +87,13 @@ function ConfiguracoesTab({
                     <div style={{display: 'flex', gap: '0.5rem'}}>
                       <button 
                         className="btn btn-outline btn-small"
-                        onClick={() => onEdit(activeConfig.slice(0, -1), item)}
+                        onClick={() => onEdit(pluralToSingular[activeConfig], item)}
                       >
                         ✏️ Editar
                       </button>
                       <button 
                         className="btn btn-danger btn-small"
-                        onClick={() => handleDelete(activeConfig.slice(0, -1), item.id)}
+                        onClick={() => handleDelete(pluralToSingular[activeConfig], item.id)}
                       >
                         🗑️ Excluir
                       </button>

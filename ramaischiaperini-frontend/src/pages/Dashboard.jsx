@@ -63,7 +63,7 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
   // Função genérica para salvar itens
   const saveItem = async () => {
     try {
-      let result
+      let result = null
       
       if (modalType === 'funcionario') {
         result = editingItem 
@@ -81,13 +81,18 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
         result = editingItem 
           ? await updateUnidade(editingItem.id, formData)
           : await createUnidade(formData)
+      } else {
+        showMessage('error', `Tipo de item não reconhecido: "${modalType}"`)
+        return
       }
 
-      if (result.success) {
+      if (result && result.success) {
         showMessage('success', `${modalType} ${editingItem ? 'atualizado' : 'criado'} com sucesso!`)
         closeModal()
-      } else {
+      } else if (result && result.message) {
         showMessage('error', result.message)
+      } else {
+        showMessage('error', 'Erro desconhecido ao salvar')
       }
     } catch (error) {
       showMessage('error', 'Erro de conexão')
@@ -97,14 +102,14 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
 
   // Função genérica para deletar itens
   const deleteItem = async (type, id) => {
-    if (!canEdit){
+    if (!canEdit) {
       showMessage('error', 'Você não tem permissão para realizar esta ação.')
       return
     }
     if (!confirm('Tem certeza que deseja excluir?')) return
 
     try {
-      let result
+      let result = null
       
       if (type === 'funcionario') {
         result = await deleteFuncionario(id)
@@ -114,12 +119,17 @@ function Dashboard({ user, onLogout, message, clearMessage, showMessage }) {
         result = await deleteFuncao(id)
       } else if (type === 'unidade') {
         result = await deleteUnidade(id)
+      } else {
+        showMessage('error', `Tipo de item não reconhecido: "${type}"`)
+        return
       }
 
-      if (result.success) {
+      if (result && result.success) {
         showMessage('success', `${type} excluído com sucesso!`)
-      } else {
+      } else if (result && result.message) {
         showMessage('error', result.message)
+      } else {
+        showMessage('error', 'Erro desconhecido ao excluir')
       }
     } catch (error) {
       showMessage('error', 'Erro de conexão')

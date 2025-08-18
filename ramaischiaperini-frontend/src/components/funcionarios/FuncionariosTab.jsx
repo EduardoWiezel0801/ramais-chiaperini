@@ -24,7 +24,7 @@ function FuncionariosTab({
             <input
               type="text"
               className="form-input"
-              placeholder="🔍 Buscar funcionário..."
+              placeholder="🔍 Buscar Colaborador..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
             />
@@ -81,7 +81,7 @@ function FuncionariosTab({
         <h2>Colaboradores ({funcionarios.length})</h2>
         {canEdit && (
           <button className="btn btn-primary" onClick={onAdd}>
-            + Adicionar Funcionário
+            + Adicionar Colaborador
           </button>
         )}
       </div>
@@ -163,7 +163,7 @@ function FuncionariosTab({
 
       {funcionarios.length === 0 && (
         <div style={{textAlign: 'center', padding: '2rem', color: '#64748b'}}>
-          Nenhum funcionário encontrado
+          Nenhum Colaborador encontrado
         </div>
       )}
     </>

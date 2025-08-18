@@ -72,167 +72,227 @@ export function useFuncionarios() {
 
   // CRUD Funcionários
   const createFuncionario = async (data) => {
-    // Garantir que os IDs sejam enviados corretamente
-    const payload = {
-      nome: data.nome,
-      email: data.email || '',
-      ramal: data.ramal || '',
-      whatsapp: data.whatsapp || '',
-      departamento: data.departamento || data.departamento_id,
-      funcao: data.funcao || data.funcao_id,
-      unidade: data.unidade || data.unidade_id
-    }
+    try {
+      // Garantir que os IDs sejam enviados corretamente
+      const payload = {
+        nome: data.nome,
+        email: data.email || '',
+        ramal: data.ramal || '',
+        whatsapp: data.whatsapp || '',
+        departamento: data.departamento || data.departamento_id,
+        funcao: data.funcao || data.funcao_id,
+        unidade: data.unidade || data.unidade_id
+      }
 
-    const response = await funcionarioService.create(payload)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao salvar' }))
-      const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao salvar'
-      return { success: false, message: errorMessage }
+      const response = await funcionarioService.create(payload)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao salvar' }))
+        const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao salvar'
+        return { success: false, message: errorMessage }
+      }
+    } catch (error) {
+      console.error('Erro em createFuncionario:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   const updateFuncionario = async (id, data) => {
-    // Garantir que os IDs sejam enviados corretamente
-    const payload = {
-      nome: data.nome,
-      email: data.email || '',
-      ramal: data.ramal || '',
-      whatsapp: data.whatsapp || '',
-      departamento: data.departamento || data.departamento_id,
-      funcao: data.funcao || data.funcao_id,
-      unidade: data.unidade || data.unidade_id
-    }
+    try {
+      // Garantir que os IDs sejam enviados corretamente
+      const payload = {
+        nome: data.nome,
+        email: data.email || '',
+        ramal: data.ramal || '',
+        whatsapp: data.whatsapp || '',
+        departamento: data.departamento || data.departamento_id,
+        funcao: data.funcao || data.funcao_id,
+        unidade: data.unidade || data.unidade_id
+      }
 
-    const response = await funcionarioService.update(id, payload)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao atualizar' }))
-      const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao atualizar'
-      return { success: false, message: errorMessage }
+      const response = await funcionarioService.update(id, payload)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao atualizar' }))
+        const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao atualizar'
+        return { success: false, message: errorMessage }
+      }
+    } catch (error) {
+      console.error('Erro em updateFuncionario:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   const deleteFuncionario = async (id) => {
-    const response = await funcionarioService.delete(id)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao excluir' }))
-      return { success: false, message: errorData.detail || 'Erro ao excluir' }
+    try {
+      const response = await funcionarioService.delete(id)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao excluir' }))
+        return { success: false, message: errorData.detail || 'Erro ao excluir' }
+      }
+    } catch (error) {
+      console.error('Erro em deleteFuncionario:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   // CRUD Departamentos
   const createDepartamento = async (data) => {
-    const response = await departamentoService.create(data)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao salvar' }))
-      const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao salvar'
-      return { success: false, message: errorMessage }
+    try {
+      const response = await departamentoService.create(data)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao salvar' }))
+        const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao salvar'
+        return { success: false, message: errorMessage }
+      }
+    } catch (error) {
+      console.error('Erro em createDepartamento:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   const updateDepartamento = async (id, data) => {
-    const response = await departamentoService.update(id, data)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao atualizar' }))
-      const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao atualizar'
-      return { success: false, message: errorMessage }
+    try {
+      const response = await departamentoService.update(id, data)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao atualizar' }))
+        const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao atualizar'
+        return { success: false, message: errorMessage }
+      }
+    } catch (error) {
+      console.error('Erro em updateDepartamento:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   const deleteDepartamento = async (id) => {
-    const response = await departamentoService.delete(id)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao excluir' }))
-      return { success: false, message: errorData.detail || 'Erro ao excluir' }
+    try {
+      const response = await departamentoService.delete(id)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao excluir' }))
+        return { success: false, message: errorData.detail || 'Erro ao excluir' }
+      }
+    } catch (error) {
+      console.error('Erro em deleteDepartamento:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   // CRUD Funções
   const createFuncao = async (data) => {
-    const response = await funcaoService.create(data)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao salvar' }))
-      const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao salvar'
-      return { success: false, message: errorMessage }
+    try {
+      const response = await funcaoService.create(data)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao salvar' }))
+        const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao salvar'
+        return { success: false, message: errorMessage }
+      }
+    } catch (error) {
+      console.error('Erro em createFuncao:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   const updateFuncao = async (id, data) => {
-    const response = await funcaoService.update(id, data)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao atualizar' }))
-      const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao atualizar'
-      return { success: false, message: errorMessage }
+    try {
+      const response = await funcaoService.update(id, data)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao atualizar' }))
+        const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao atualizar'
+        return { success: false, message: errorMessage }
+      }
+    } catch (error) {
+      console.error('Erro em updateFuncao:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   const deleteFuncao = async (id) => {
-    const response = await funcaoService.delete(id)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao excluir' }))
-      return { success: false, message: errorData.detail || 'Erro ao excluir' }
+    try {
+      const response = await funcaoService.delete(id)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao excluir' }))
+        return { success: false, message: errorData.detail || 'Erro ao excluir' }
+      }
+    } catch (error) {
+      console.error('Erro em deleteFuncao:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   // CRUD Unidades
   const createUnidade = async (data) => {
-    const response = await unidadeService.create(data)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao salvar' }))
-      const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao salvar'
-      return { success: false, message: errorMessage }
+    try {
+      const response = await unidadeService.create(data)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao salvar' }))
+        const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao salvar'
+        return { success: false, message: errorMessage }
+      }
+    } catch (error) {
+      console.error('Erro em createUnidade:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   const updateUnidade = async (id, data) => {
-    const response = await unidadeService.update(id, data)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao atualizar' }))
-      const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao atualizar'
-      return { success: false, message: errorMessage }
+    try {
+      const response = await unidadeService.update(id, data)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao atualizar' }))
+        const errorMessage = Object.values(errorData).flat().join(', ') || 'Erro ao atualizar'
+        return { success: false, message: errorMessage }
+      }
+    } catch (error) {
+      console.error('Erro em updateUnidade:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
   const deleteUnidade = async (id) => {
-    const response = await unidadeService.delete(id)
-    if (response.ok) {
-      await loadAllData()
-      return { success: true }
-    } else {
-      const errorData = await response.json().catch(() => ({ detail: 'Erro ao excluir' }))
-      return { success: false, message: errorData.detail || 'Erro ao excluir' }
+    try {
+      const response = await unidadeService.delete(id)
+      if (response.ok) {
+        await loadAllData()
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ detail: 'Erro ao excluir' }))
+        return { success: false, message: errorData.detail || 'Erro ao excluir' }
+      }
+    } catch (error) {
+      console.error('Erro em deleteUnidade:', error)
+      return { success: false, message: 'Erro de conexão' }
     }
   }
 
