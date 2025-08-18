@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { authService, authenticatedFetch } from '../services/api'
+import { authService, authenticatedFetch, API_BASE } from '../services/api'
 
 export function useAuth() {
   const [user, setUser] = useState(null)
@@ -12,7 +12,7 @@ export function useAuth() {
   const initializeAuth = async () => {
     try {
       // Primeiro, obter CSRF token fazendo uma requisição inicial
-      await authenticatedFetch('http://localhost:8000/api/')
+      await authenticatedFetch(`${API_BASE}/`)
       
       // Depois verificar autenticação
       const userData = await authService.checkAuth()

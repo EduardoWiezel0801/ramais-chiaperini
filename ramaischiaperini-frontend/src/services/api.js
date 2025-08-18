@@ -1,4 +1,4 @@
-const API_BASE = 'http://192.168.3.174:8000/api'
+export const API_BASE = 'http://192.168.3.174:8000/api'
 
 // Função para obter CSRF token
 const getCSRFToken = () => {
@@ -19,7 +19,21 @@ const getCSRFToken = () => {
 
 // Função para fazer requisições autenticadas
 export const authenticatedFetch = async (url, options = {}) => {
-  const csrfToken = getCSRFToken()
+  // Primeira tentativa: obter CSRF se ainda não temos
+  let csrfToken = getCSRFToken()
+  
+  // Se não temos CSRF token, fazer uma requisição GET primeiro para obtê-lo
+  if (!csrfToken && options.method && options.method !== 'GET') {
+    try {
+      await fetch(`${API_BASE}/`, {
+        method: 'GET',
+        credentials: 'include'
+      })
+      csrfToken = getCSRFToken()
+    } catch (error) {
+      console.log('Erro ao obter CSRF token:', error)
+    }
+  }
   
   const defaultHeaders = {
     'Content-Type': 'application/json',

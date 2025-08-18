@@ -2,6 +2,7 @@ from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import login, logout
 from django.db.models import Q
@@ -73,19 +74,19 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Apenas admins podem criar usuários"""
         if not self.request.user.is_admin:
-            raise PermissionError('Apenas administradores podem criar usuários')
+            raise PermissionDenied('Apenas administradores podem criar usuários')
         serializer.save()
     
     def perform_update(self, serializer):
         """Usuários podem editar apenas seus próprios dados, admins podem editar todos"""
         if not self.request.user.is_admin and self.get_object() != self.request.user:
-            raise PermissionError('Você só pode editar seus próprios dados')
+            raise PermissionDenied('Você só pode editar seus próprios dados')
         serializer.save()
     
     def perform_destroy(self, serializer):
         """Apenas admins podem excluir usuários (soft delete)"""
         if not self.request.user.is_admin:
-            raise PermissionError('Apenas administradores podem excluir usuários')
+            raise PermissionDenied('Apenas administradores podem excluir usuários')
         # Soft delete - apenas marca como inativo
         usuario = self.get_object()
         usuario.ativo = False
@@ -108,21 +109,21 @@ class DepartamentoViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Verificar se usuário pode editar antes de criar"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para criar departamentos')
+            raise PermissionDenied('Você não tem permissão para criar departamentos')
         serializer.save()
     
     def perform_update(self, serializer):
         """Verificar se usuário pode editar antes de atualizar"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para editar departamentos')
+            raise PermissionDenied('Você não tem permissão para editar departamentos')
         serializer.save()
     
     def perform_destroy(self, instance):
         """Verificar se tem funcionários vinculados antes de excluir"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para excluir departamentos')
+            raise PermissionDenied('Você não tem permissão para excluir departamentos')
         if instance.funcionarios.filter(ativo=True).exists():
-            raise ValueError('Não é possível excluir departamento com funcionários vinculados')
+            raise ValidationError('Não é possível excluir departamento com funcionários vinculados')
         instance.delete()
 
 
@@ -142,21 +143,21 @@ class FuncaoViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Verificar se usuário pode editar antes de criar"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para criar funções')
+            raise PermissionDenied('Você não tem permissão para criar funções')
         serializer.save()
     
     def perform_update(self, serializer):
         """Verificar se usuário pode editar antes de atualizar"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para editar funções')
+            raise PermissionDenied('Você não tem permissão para editar funções')
         serializer.save()
     
     def perform_destroy(self, instance):
         """Verificar se tem funcionários vinculados antes de excluir"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para excluir funções')
+            raise PermissionDenied('Você não tem permissão para excluir funções')
         if instance.funcionarios.filter(ativo=True).exists():
-            raise ValueError('Não é possível excluir função com funcionários vinculados')
+            raise ValidationError('Não é possível excluir função com funcionários vinculados')
         instance.delete()
 
 
@@ -176,21 +177,21 @@ class UnidadeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Verificar se usuário pode editar antes de criar"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para criar unidades')
+            raise PermissionDenied('Você não tem permissão para criar unidades')
         serializer.save()
     
     def perform_update(self, serializer):
         """Verificar se usuário pode editar antes de atualizar"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para editar unidades')
+            raise PermissionDenied('Você não tem permissão para editar unidades')
         serializer.save()
     
     def perform_destroy(self, instance):
         """Verificar se tem funcionários vinculados antes de excluir"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para excluir unidades')
+            raise PermissionDenied('Você não tem permissão para excluir unidades')
         if instance.funcionarios.filter(ativo=True).exists():
-            raise ValueError('Não é possível excluir unidade com funcionários vinculados')
+            raise ValidationError('Não é possível excluir unidade com funcionários vinculados')
         instance.delete()
 
 
@@ -210,13 +211,13 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Verificar se usuário pode editar antes de criar"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para criar funcionários')
+            raise PermissionDenied('Você não tem permissão para criar funcionários')
         serializer.save()
     
     def perform_update(self, serializer):
         """Verificar se usuário pode editar antes de atualizar"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para editar funcionários')
+            raise PermissionDenied('Você não tem permissão para editar funcionários')
         serializer.save()
     
     def get_serializer_class(self):
@@ -268,6 +269,6 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         """Soft delete - apenas marca como inativo"""
         if not check_edit_permission(self.request.user):
-            raise PermissionError('Você não tem permissão para excluir funcionários')
+            raise PermissionDenied('Você não tem permissão para excluir funcionários')
         instance.ativo = False
         instance.save()
