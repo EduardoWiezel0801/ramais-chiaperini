@@ -1,4 +1,5 @@
 import { iniciarLigacao } from '../../utils/microSipHelper';
+import { abrirOutlookCompose } from '../../utils/outlookHelper'
 
 function FuncionariosTab({ 
   funcionarios, 
@@ -120,12 +121,16 @@ function FuncionariosTab({
                   ) : '-'}
                 </td>
                 <td>
-                  {func.email ? (
-                    <a href={`mailto:${func.email}`} className="info-value">
-                      {func.email}
-                    </a>
-                  ) : '-'}
-                </td>
+                    {func.email ? (
+                      <button 
+                        className="contact-button"
+                        onClick={() => abrirOutlookCompose(func.email)}
+                        title={`Enviar email para ${func.email}`}
+                      >
+                        {func.email}
+                      </button>
+                    ) : '-'}
+                  </td>
                 <td>
                   {func.whatsapp ? (
                     <a 

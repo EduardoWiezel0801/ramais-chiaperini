@@ -206,7 +206,9 @@ class FuncionarioListSerializer(serializers.ModelSerializer):
         model = Funcionario
         fields = [
             'id', 'nome', 'ramal', 'email', 'whatsapp',
-            'departamento_nome', 'funcao_nome', 'unidade_nome'
+            'departamento', 'departamento_nome',
+            'funcao', 'funcao_nome', 
+            'unidade', 'unidade_nome'
         ]
     
     def get_departamento_nome(self, obj):

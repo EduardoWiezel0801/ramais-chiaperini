@@ -409,6 +409,68 @@
   }
 }
 
+/* Email button styles - Outlook integration */
+.email-test-btn {
+  min-width: auto !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  color: var(--gray-600);
+  transition: var(--transition-fast);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.email-test-btn:hover {
+  background: var(--chiaperini-blue);
+  color: var(--white);
+  border-color: var(--chiaperini-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.email-test-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.email-input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.email-input-group .form-input {
+  flex: 1;
+}
+
+/* Contact button in table */
+.contact-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--chiaperini-blue);
+  text-decoration: none;
+  transition: var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+.contact-button:hover {
+  color: var(--chiaperini-dark);
+  text-decoration: underline;
+}
+
+.contact-button:focus {
+  outline: 2px solid var(--chiaperini-blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* ===========================================
    FIM DO ARQUIVO PRINCIPAL
    =========================================== */

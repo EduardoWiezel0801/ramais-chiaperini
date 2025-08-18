@@ -1,3 +1,5 @@
+import { abrirOutlookCompose } from '../../utils/outlookHelper'
+
 function FuncionarioForm({ 
   formData, 
   setFormData, 
@@ -27,15 +29,27 @@ function FuncionarioForm({
           />
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Email</label>
-          <input
-            type="email"
-            className="form-input"
-            value={formData.email || ''}
-            onChange={(e) => setFormData({...formData, email: e.target.value})}
-          />
-        </div>
+<div className="form-group">
+  <label className="form-label">Email</label>
+  <div className="email-input-group">
+    <input
+      type="email"
+      className="form-input"
+      value={formData.email || ''}
+      onChange={(e) => setFormData({...formData, email: e.target.value})}
+    />
+    {formData.email && (
+      <button
+        type="button"
+        className="email-test-btn"
+        onClick={() => abrirOutlookCompose(formData.email)}
+        title="Testar email no Outlook"
+      >
+        📧
+      </button>
+    )}
+  </div>
+</div>
 
         <div className="form-group">
           <label className="form-label">Ramal</label>
@@ -62,8 +76,8 @@ function FuncionarioForm({
           <label className="form-label">Departamento</label>
           <select
             className="form-select"
-            value={formData.departamento || formData.departamento_id || ''}
-            onChange={(e) => setFormData({...formData, departamento: e.target.value, departamento_id: e.target.value})}
+            value={formData.departamento || ''}
+            onChange={(e) => setFormData({...formData, departamento: e.target.value})}
             required
           >
             <option value="">Selecione...</option>
@@ -77,8 +91,8 @@ function FuncionarioForm({
           <label className="form-label">Função</label>
           <select
             className="form-select"
-            value={formData.funcao || formData.funcao_id || ''}
-            onChange={(e) => setFormData({...formData, funcao: e.target.value, funcao_id: e.target.value})}
+            value={formData.funcao || ''}
+            onChange={(e) => setFormData({...formData, funcao: e.target.value})}
             required
           >
             <option value="">Selecione...</option>
@@ -92,8 +106,8 @@ function FuncionarioForm({
           <label className="form-label">Unidade</label>
           <select
             className="form-select"
-            value={formData.unidade || formData.unidade_id || ''}
-            onChange={(e) => setFormData({...formData, unidade: e.target.value, unidade_id: e.target.value})}
+            value={formData.unidade || ''}
+            onChange={(e) => setFormData({...formData, unidade: e.target.value})}
             required
           >
             <option value="">Selecione...</option>
