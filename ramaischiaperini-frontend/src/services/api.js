@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8000/api'
+const API_BASE = 'http://192.168.3.174:8000/api'
 
 // Função para obter CSRF token
 const getCSRFToken = () => {
