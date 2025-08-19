@@ -12,7 +12,7 @@ export function useAuth() {
   const initializeAuth = async () => {
     try {
       // Primeiro, obter CSRF token fazendo uma requisição inicial
-      await authenticatedFetch(`${API_BASE}/`)
+      await authenticatedFetch(`${API_BASE}/auth/csrf/`)
       
       // Depois verificar autenticação
       const userData = await authService.checkAuth()

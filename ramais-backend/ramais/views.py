@@ -6,6 +6,10 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import login, logout
 from django.db.models import Q
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils.decorators import method_decorator
+from django.http import JsonResponse
+from django.views import View
 
 from .models import Usuario, Departamento, Funcao, Unidade, Funcionario
 from .serializers import (
@@ -20,11 +24,25 @@ def check_edit_permission(user):
     return user.is_admin or user.can_edit
 
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
+class CSRFTokenView(View):
+    """
+    View para fornecer CSRF token para o frontend
+    """
+    def get(self, request):
+        return JsonResponse({'detail': 'CSRF cookie set'})
+
+
 class AuthViewSet(viewsets.ViewSet):
     """
     ViewSet para autenticação - login, logout, me
     """
     permission_classes = [AllowAny]
+    
+    @action(detail=False, methods=['get'])
+    def csrf(self, request):
+        """Endpoint para obter CSRF token"""
+        return Response({'detail': 'CSRF cookie set'})
     
     @action(detail=False, methods=['post'])
     def login(self, request):

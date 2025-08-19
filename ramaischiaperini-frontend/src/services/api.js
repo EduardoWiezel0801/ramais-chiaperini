@@ -25,7 +25,7 @@ export const authenticatedFetch = async (url, options = {}) => {
   // Se não temos CSRF token, fazer uma requisição GET primeiro para obtê-lo
   if (!csrfToken && options.method && options.method !== 'GET') {
     try {
-      await fetch(`${API_BASE}/`, {
+      await fetch(`${API_BASE}/auth/csrf/`, {
         method: 'GET',
         credentials: 'include'
       })

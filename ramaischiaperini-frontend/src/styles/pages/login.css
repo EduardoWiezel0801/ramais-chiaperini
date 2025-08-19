@@ -149,7 +149,7 @@
 }
 
 .logo-chiaperini {
-  background: linear-gradient(135deg, var(--chiaperini-blue), var(--chiaperini-dark));
+  background: transparent;
   color: var(--white);
   padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--border-radius-sm);
@@ -165,7 +165,7 @@
 }
 
 .logo-techto {
-  background: linear-gradient(135deg, var(--techto-red), #dc2626);
+  background: transparent;
   color: var(--white);
   padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--border-radius-sm);
