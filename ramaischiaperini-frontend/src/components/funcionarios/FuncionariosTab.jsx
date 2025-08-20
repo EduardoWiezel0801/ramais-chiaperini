@@ -100,6 +100,7 @@ function FuncionariosTab({
               <th>Departamento</th>
               <th>Função</th>
               <th>Unidade</th>
+              <th>Teams</th>
               {canEdit && <th>Ações</th>}
             </tr>
           </thead>
@@ -143,6 +144,14 @@ function FuncionariosTab({
                     </a>
                   ) : '-'}
                 </td>
+                <td>{func.teams || '-'}</td>
+                <td>
+                  {func.departamento_nome ? (
+                    <span className={`badge badge-${func.departamento_nome === 'Chiaperini' ? 'chiaperini' : 'techto'}`}>
+                      {func.departamento_nome}
+                    </span>
+                   ) : '-'}
+                </td>
                 <td>
                   {func.departamento_nome ? (
                     <span className={`badge badge-${func.departamento_nome === 'Chiaperini' ? 'chiaperini' : 'techto'}`}>
@@ -154,7 +163,7 @@ function FuncionariosTab({
                 <td>{func.unidade_nome || '-'}</td>
                 {canEdit && (
                   <td >
-                    <div style={{display: 'flex', justifyContent: "center", gap: '0.5rem', width: "50%"}}>
+                    <div className="table-actions">
                       <button 
                         className="btn btn-outline btn-small"
                         onClick={() => onEdit(func)}

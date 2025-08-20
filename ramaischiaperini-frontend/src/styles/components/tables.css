@@ -181,17 +181,32 @@
 /* Table Actions Column */
 .table-actions {
   display: flex;
-  gap: var(--spacing-sm);
-  justify-content: flex-end;
-  
- 
-  
+  gap: var(--spacing-xs);
+  justify-content: center;
+  align-items: center;
+  min-width: 140px;
+  white-space: nowrap;
 }
 
 .table-actions .btn {
   padding: var(--spacing-xs) var(--spacing-sm);
   font-size: var(--text-xs);
-  
+  min-width: auto;
+  flex-shrink: 0;
+}
+
+.table-actions .btn-small {
+  padding: 4px 8px;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+/* Coluna de ações com largura fixa */
+.table th:last-child,
+.table td:last-child {
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
 }
 
 /* Table Status Indicators */
@@ -409,4 +424,22 @@
   background: var(--gray-50);
   padding: var(--spacing-lg);
   border-left: 4px solid var(--chiaperini-blue);
+}
+
+/* Configuração específica para colunas */
+.table th,
+.table td {
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table td:last-child {
+  text-align: center;
+}
+
+/* Evitar quebra de texto nos botões */
+.table-actions button {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

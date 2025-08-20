@@ -71,6 +71,17 @@ function FuncionarioForm({
             placeholder="(11) 99999-9999"
           />
         </div>
+        
+         <div className="form-group">
+          <label className="form-label">Teams</label>
+          <input
+            type="text"
+            className="form-input"
+            value={formData.teams || ''}
+            onChange={(e) => setFormData({...formData, teams: e.target.value})}
+            placeholder="usuario@empresa.com"
+          />
+        </div>
 
         <div className="form-group">
           <label className="form-label">Departamento</label>
