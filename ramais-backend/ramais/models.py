@@ -74,6 +74,7 @@ class Funcionario(models.Model):
     ramal = models.CharField(max_length=20, blank=True, null=True, verbose_name='Ramal')
     email = models.EmailField(max_length=200, blank=True, null=True, verbose_name='E-mail')
     whatsapp = models.CharField(max_length=20, blank=True, null=True, verbose_name='WhatsApp')
+    teams = models.CharField(max_length=100, blank=True, null=True, verbose_name='Teams')
     ativo = models.BooleanField(default=True, verbose_name='Ativo')
     
     # Relacionamentos com chaves estrangeiras

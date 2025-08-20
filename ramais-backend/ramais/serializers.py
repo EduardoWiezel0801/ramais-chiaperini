@@ -167,7 +167,7 @@ class FuncionarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Funcionario
         fields = [
-            'id', 'nome', 'ramal', 'email', 'whatsapp', 'ativo',
+            'id', 'nome', 'ramal', 'email', 'teams', 'whatsapp', 'ativo',
             'departamento', 'departamento_nome',
             'funcao', 'funcao_nome',
             'unidade', 'unidade_nome'
@@ -205,7 +205,7 @@ class FuncionarioListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Funcionario
         fields = [
-            'id', 'nome', 'ramal', 'email', 'whatsapp',
+            'id', 'nome', 'ramal', 'email', 'teams', 'whatsapp',
             'departamento', 'departamento_nome',
             'funcao', 'funcao_nome', 
             'unidade', 'unidade_nome'

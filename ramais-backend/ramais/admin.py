@@ -121,7 +121,7 @@ class FuncionarioAdmin(admin.ModelAdmin):
         'departamento', 'funcao', 'unidade', 'ativo_badge'
     )
     list_filter = ('ativo', 'departamento', 'funcao', 'unidade')
-    search_fields = ('nome', 'ramal', 'email', 'whatsapp')
+    search_fields = ('nome', 'ramal', 'email', 'whatsapp', 'teams')
     ordering = ('nome',)
     
     # Campos no formulário
@@ -130,7 +130,7 @@ class FuncionarioAdmin(admin.ModelAdmin):
             'fields': ('nome', 'ativo')
         }),
         ('Contato', {
-            'fields': ('ramal', 'email', 'whatsapp')
+            'fields': ('ramal', 'email', 'whatsapp', 'teams')
         }),
         ('Organização', {
             'fields': ('departamento', 'funcao', 'unidade')

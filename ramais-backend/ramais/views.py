@@ -312,8 +312,7 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
         return queryset
     
     def perform_destroy(self, instance):
-        """Soft delete - apenas marca como inativo"""
+        """Excluir funcionário do banco de dados"""
         if not check_edit_permission(self.request.user):
             raise PermissionDenied('Você não tem permissão para excluir funcionários')
-        instance.ativo = False
-        instance.save()
+        instance.delete()
