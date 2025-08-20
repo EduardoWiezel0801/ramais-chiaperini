@@ -226,11 +226,38 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
     ordering_fields = ['nome', 'ramal']
     ordering = ['nome']
     
+    def create(self, request, *args, **kwargs):
+        """Override do método create para adicionar logs de debug"""
+        print("=== DEBUG CREATE REQUEST ===")
+        print("Dados recebidos:", request.data)
+        
+        serializer = self.get_serializer(data=request.data)
+        
+        if not serializer.is_valid():
+            print("Erros de validação:", serializer.errors)
+            print("=== FIM DEBUG ===")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
     def perform_create(self, serializer):
         """Verificar se usuário pode editar antes de criar"""
         if not check_edit_permission(self.request.user):
             raise PermissionDenied('Você não tem permissão para criar funcionários')
-        serializer.save()
+        
+        # Log temporário para debug
+        print("=== DEBUG CREATE FUNCIONARIO ===")
+        print("Dados recebidos:", self.request.data)
+        
+        try:
+            serializer.save()
+            print("Funcionário criado com sucesso!")
+        except Exception as e:
+            print("Erro ao salvar:", str(e))
+            print("=== FIM DEBUG ===")
+            raise e
     
     def perform_update(self, serializer):
         """Verificar se usuário pode editar antes de atualizar"""
