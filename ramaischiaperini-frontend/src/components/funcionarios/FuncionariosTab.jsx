@@ -1,5 +1,6 @@
 import { iniciarLigacao } from '../../utils/microSipHelper';
-import { abrirOutlookCompose } from '../../utils/outlookHelper'
+import { abrirOutlookCompose } from '../../utils/outlookHelper';
+import { abrirTeamsChat } from '../../utils/teamsHelper';
 
 function FuncionariosTab({ 
   funcionarios, 
@@ -97,10 +98,10 @@ function FuncionariosTab({
               <th>Ramal</th>
               <th>Email</th>
               <th>WhatsApp</th>
+              <th>Teams</th>
               <th>Departamento</th>
               <th>Função</th>
               <th>Unidade</th>
-              <th>Teams</th>
               {canEdit && <th>Ações</th>}
             </tr>
           </thead>
@@ -122,47 +123,58 @@ function FuncionariosTab({
                   ) : '-'}
                 </td>
                 <td>
-                    {func.email ? (
-                      <button 
-                        className="contact-button"
-                        onClick={() => abrirOutlookCompose(func.email)}
-                        title={`Enviar email para ${func.email}`}
-                      >
-                        {func.email}
-                      </button>
-                    ) : '-'}
-                  </td>
+                  {func.email ? (
+                    <button 
+                      className="contact-button"
+                      onClick={() => abrirOutlookCompose(func.email)}
+                      title={`Enviar email para ${func.email}`}
+                    >
+                      {func.email}
+                    </button>
+                  ) : '-'}
+                </td>
                 <td>
                   {func.whatsapp ? (
                     <a 
-                      href={`https://wa.me/55${func.whatsapp.replace(/\D/g, '')}`}
+                      href={`https://wa.me/55${func.whatsapp.replace(/\\D/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="info-value"
+                      className="contact-button"
                     >
                       {func.whatsapp}
                     </a>
                   ) : '-'}
                 </td>
-                <td>{func.teams || '-'}</td>
                 <td>
-                  {func.departamento_nome ? (
-                    <span className={`badge badge-${func.departamento_nome === 'Chiaperini' ? 'chiaperini' : 'techto'}`}>
-                      {func.departamento_nome}
-                    </span>
-                   ) : '-'}
+                  {func.teams ? (
+                    <button 
+                      className="contact-button"
+                      onClick={() => abrirTeamsChat(func.teams)}
+                      title={`Abrir Teams com ${func.teams}`}
+                    >
+                      {func.teams}
+                    </button>
+                  ) : '-'}
                 </td>
                 <td>
                   {func.departamento_nome ? (
-                    <span className={`badge badge-${func.departamento_nome === 'Chiaperini' ? 'chiaperini' : 'techto'}`}>
+                    <span className={`badge badge-${func.unidade_nome === 'Chiaperini' ? 'chiaperini' : 'techto'}`}>
                       {func.departamento_nome}
                     </span>
                   ) : '-'}
                 </td>
-                <td>{func.funcao_nome || '-'}</td>
-                <td>{func.unidade_nome || '-'}</td>
+                <td>
+                  {func.funcao_nome || '-'}
+                </td>
+                <td>
+                  {func.unidade_nome ? (
+                    <span className={`badge badge-${func.unidade_nome === 'Chiaperini' ? 'chiaperini' : 'techto'}`}>
+                      {func.unidade_nome}
+                    </span>
+                  ) : '-'}
+                </td>
                 {canEdit && (
-                  <td >
+                  <td>
                     <div className="table-actions">
                       <button 
                         className="btn btn-outline btn-small"

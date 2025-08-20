@@ -1,4 +1,5 @@
 import { abrirOutlookCompose } from '../../utils/outlookHelper'
+import { abrirTeamsChat } from '../../utils/teamsHelper';
 
 function FuncionarioForm({ 
   formData, 
@@ -29,28 +30,6 @@ function FuncionarioForm({
           />
         </div>
 
-<div className="form-group">
-  <label className="form-label">Email</label>
-  <div className="email-input-group">
-    <input
-      type="email"
-      className="form-input"
-      value={formData.email || ''}
-      onChange={(e) => setFormData({...formData, email: e.target.value})}
-    />
-    {formData.email && (
-      <button
-        type="button"
-        className="email-test-btn"
-        onClick={() => abrirOutlookCompose(formData.email)}
-        title="Testar email no Outlook"
-      >
-        📧
-      </button>
-    )}
-  </div>
-</div>
-
         <div className="form-group">
           <label className="form-label">Ramal</label>
           <input
@@ -58,7 +37,31 @@ function FuncionarioForm({
             className="form-input"
             value={formData.ramal || ''}
             onChange={(e) => setFormData({...formData, ramal: e.target.value})}
+            placeholder="Ex: 7001"
           />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Email</label>
+          <div className="email-input-group">
+            <input
+              type="email"
+              className="form-input"
+              value={formData.email || ''}
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              placeholder="usuario@empresa.com"
+            />
+            {formData.email && (
+              <button
+                type="button"
+                className="email-test-btn"
+                onClick={() => abrirOutlookCompose(formData.email)}
+                title="Testar email no Outlook"
+              >
+                📧
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="form-group">
@@ -68,19 +71,29 @@ function FuncionarioForm({
             className="form-input"
             value={formData.whatsapp || ''}
             onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
-            placeholder="(11) 99999-9999"
+            placeholder="(16) 99999-9999"
           />
         </div>
         
-         <div className="form-group">
+        <div className="form-group">
           <label className="form-label">Teams</label>
           <input
             type="text"
             className="form-input"
             value={formData.teams || ''}
             onChange={(e) => setFormData({...formData, teams: e.target.value})}
-            placeholder="usuario@empresa.com"
+            placeholder="Ex: adenilson.junior1 ou email@empresa.com"
           />
+          {formData.teams && (
+              <button
+                type="button"
+                className="email-test-btn"
+                onClick={() => abrirTeamsChat(formData.teams)}
+                title="Abrir Teams"
+              >
+                💬
+              </button>
+            )}
         </div>
 
         <div className="form-group">
@@ -91,7 +104,7 @@ function FuncionarioForm({
             onChange={(e) => setFormData({...formData, departamento: e.target.value})}
             required
           >
-            <option value="">Selecione...</option>
+            <option value="">Selecione um departamento...</option>
             {departamentos.map(dept => (
               <option key={dept.id} value={dept.id}>{dept.nome}</option>
             ))}
@@ -106,7 +119,7 @@ function FuncionarioForm({
             onChange={(e) => setFormData({...formData, funcao: e.target.value})}
             required
           >
-            <option value="">Selecione...</option>
+            <option value="">Selecione uma função...</option>
             {funcoes.map(func => (
               <option key={func.id} value={func.id}>{func.nome}</option>
             ))}
@@ -121,7 +134,7 @@ function FuncionarioForm({
             onChange={(e) => setFormData({...formData, unidade: e.target.value})}
             required
           >
-            <option value="">Selecione...</option>
+            <option value="">Selecione uma unidade...</option>
             {unidades.map(unid => (
               <option key={unid.id} value={unid.id}>{unid.nome}</option>
             ))}
@@ -133,7 +146,7 @@ function FuncionarioForm({
             Cancelar
           </button>
           <button type="submit" className="btn btn-primary">
-            {isEditing ? 'Atualizar' : 'Criar'}
+            {isEditing ? 'Atualizar' : 'Criar'} Colaborador
           </button>
         </div>
       </form>

@@ -460,3 +460,124 @@
     border-width: 3px;
   }
 }
+
+/* Email Input Group Styling */
+.email-input-group {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: stretch;
+}
+
+.email-input-group .form-input {
+  flex: 1;
+}
+
+.email-test-btn {
+  min-width: auto !important;
+  padding: var(--spacing-sm) var(--spacing-md) !important;
+  font-size: var(--text-sm) !important;
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  color: var(--gray-600);
+  transition: var(--transition-fast);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.email-test-btn:hover {
+  background: var(--chiaperini-blue);
+  color: var(--white);
+  border-color: var(--chiaperini-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.email-test-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.email-test-btn:focus {
+  outline: 2px solid var(--chiaperini-blue);
+  outline-offset: 2px;
+}
+
+/* Teams Field Styling */
+.form-input[placeholder*="@"] {
+  font-family: 'Courier New', monospace;
+  font-size: var(--text-sm);
+}
+
+/* Search Input Styling */
+.search-input {
+  flex: 1;
+  min-width: 300px;
+}
+
+.search-input .form-input {
+  font-size: var(--text-base);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+/* Filter Group Improvements */
+.filter-group {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-item {
+  min-width: 180px;
+  flex: 1;
+}
+
+.search-row {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+/* Search Filters Container */
+.search-filters {
+  background: var(--white);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid var(--gray-200);
+}
+
+/* Responsive Improvements */
+@media (max-width: 768px) {
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-md);
+  }
+  
+  .filter-group {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .filter-item {
+    min-width: 100%;
+  }
+  
+  .search-input {
+    min-width: 100%;
+  }
+  
+  .email-input-group {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .email-test-btn {
+    align-self: flex-start;
+    min-width: 80px !important;
+  }
+}
